@@ -1,4 +1,10 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  NotFoundException,
+  Post,
+} from '@nestjs/common';
 import { AuthDto } from '../dto/auth.dto';
 import {
   ApiBadRequestResponse,
@@ -63,7 +69,9 @@ export class AuthController {
       'User with the given email does not exist or email has already been verified',
   })
   @HttpCode(204)
-  async registrationEmailResending(@Body() emailDto: EmailDto) {}
+  async registrationEmailResending(@Body() emailDto: EmailDto) {
+    throw new NotFoundException('Fuck you');
+  }
   @Post('login')
   @ApiBody({ type: AuthDto })
   @ApiResponse({
