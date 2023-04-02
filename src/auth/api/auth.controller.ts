@@ -26,11 +26,14 @@ export class AuthController {
       'Input data is accepted. Email with confirmation code will be send to passed email address',
   })
   @ApiBadRequestResponse({
-    description: 'User with this email is already registered',
+    description:
+      'If the inputModel has incorrect values (in particular if the user with the given email already registered)',
     type: FieldError,
   })
   @HttpCode(204)
-  async registration(@Body() authDto: AuthDto) {}
+  async registration(@Body() authDto: AuthDto) {
+    console.log(authDto.email);
+  }
   @Post('registration-confirmation')
   @ApiBody({ type: ConfirmationCodeDto })
   @ApiResponse({
