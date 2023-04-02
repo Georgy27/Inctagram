@@ -31,9 +31,7 @@ export class AuthController {
     type: FieldError,
   })
   @HttpCode(204)
-  async registration(@Body() authDto: AuthDto) {
-    console.log(authDto.email);
-  }
+  async registration(@Body() authDto: AuthDto) {}
   @Post('registration-confirmation')
   @ApiBody({ type: ConfirmationCodeDto })
   @ApiResponse({
