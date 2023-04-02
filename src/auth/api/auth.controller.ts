@@ -69,9 +69,7 @@ export class AuthController {
       'User with the given email does not exist or email has already been verified',
   })
   @HttpCode(204)
-  async registrationEmailResending(@Body() emailDto: EmailDto) {
-    throw new NotFoundException('Fuck you');
-  }
+  async registrationEmailResending(@Body() emailDto: EmailDto) {}
   @Post('login')
   @ApiBody({ type: AuthDto })
   @ApiResponse({

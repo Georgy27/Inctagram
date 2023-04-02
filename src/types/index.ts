@@ -3,7 +3,7 @@ export class FieldError {
   @ApiProperty()
   statusCode: string;
   @ApiProperty()
-  message: string;
+  message: string[];
   @ApiProperty()
   path: string;
 }
