@@ -17,20 +17,12 @@ export class RegisterUserUseCase
     private mailService: MailService,
   ) {}
   async execute(command: RegisterUserCommand) {
-    // const { email, password } = command.authDto;
-    //
-    // // check that user with the given login or email does not exist
-    // const checkUserLogin = await this.usersSQLRepository.findUserByLogin(login);
-    // if (checkUserLogin)
-    //   throw new BadRequestException([
-    //     { message: 'This login already exists', field: 'login' },
-    //   ]);
-    // const checkUserEmail = await this.usersSQLRepository.findUserByEmail(email);
-    // if (checkUserEmail)
-    //   throw new BadRequestException([
-    //     { message: 'This email already exists', field: 'email' },
-    //   ]);
-    // //   // create user
+    const { email, password } = command.authDto;
+    // check that user with the given email does not exist
+    const checkUserEmail = await this.userRepository.findUserByEmail(email);
+    if (checkUserEmail)
+      throw new BadRequestException('This email already exists');
+    // create user
     // // generate salt and hash
     // const passwordSalt = await bcrypt.genSalt(10);
     // const hash = await bcrypt.hash(password, passwordSalt);
