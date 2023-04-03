@@ -14,16 +14,20 @@ import {
   AuthRegistrationEmailResendingSwaggerDecorator,
   AuthRegistrationSwaggerDecorator,
 } from '../../common/decorators/swagger/auth.decorators';
+import { CommandBus } from '@nestjs/cqrs';
+import { RegisterUserCommand } from '../use-cases/register-user-use-case';
 
 @ApiTags('Auth')
 @Controller('/api/auth')
 export class AuthController {
-  constructor() {}
+  constructor(private commandBus: CommandBus) {}
 
   @Post('registration')
   @AuthRegistrationSwaggerDecorator()
   @HttpCode(204)
-  async registration(@Body() authDto: AuthDto) {}
+  async registration(@Body() authDto: AuthDto) {
+    return this.commandBus.execute(new RegisterUserCommand(authDto));
+  }
 
   @Post('registration-confirmation')
   @AuthRegistrationConfirmationSwaggerDecorator()
