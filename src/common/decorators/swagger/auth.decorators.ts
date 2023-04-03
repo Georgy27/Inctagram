@@ -7,7 +7,7 @@ import {
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthDto } from '../../../auth/dto/auth.dto';
+import { AuthDto } from 'src/auth/dto/auth.dto';
 import { FieldError, LogginSuccessViewModel } from '../../../types';
 import { applyDecorators } from '@nestjs/common';
 import { ConfirmationCodeDto } from '../../../auth/dto/confirmation-code.dto';
