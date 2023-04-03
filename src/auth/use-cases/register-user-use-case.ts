@@ -22,15 +22,11 @@ export class RegisterUserUseCase
     const checkUserEmail = await this.userRepository.findUserByEmail(email);
     if (checkUserEmail)
       throw new BadRequestException('This email already exists');
-    // create user
-    // // generate salt and hash
-    // const passwordSalt = await bcrypt.genSalt(10);
-    // const hash = await bcrypt.hash(password, passwordSalt);
-    //
-    // const newUser = await this.usersSQLRepository.createUser(
-    //   command.authDto,
-    //   hash,
-    // );
+    // generate salt and hash
+    const passwordSalt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, passwordSalt);
+
+    const newUser = await this.userRepository.createUser(command.authDto, hash);
     // const emailConfirmation =
     //   await this.usersSQLRepository.getEmailConfirmationCode(newUser.email);
     // if (!emailConfirmation)
