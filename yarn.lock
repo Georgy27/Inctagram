@@ -1113,6 +1113,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/engines@npm:4.12.0":
+  version: 4.12.0
+  resolution: "@prisma/engines@npm:4.12.0"
+  checksum: 5d226a2c86bee5bc6fa34910ec9ba9a68a1c0248977d0da47964372edcfe773ee6c4bb00e244258f535570f018d883f0ab9e2677cf06471869bb8857f79880f6
+  languageName: node
+  linkType: hard
+
 "@sinclair/typebox@npm:^0.25.16":
   version: 0.25.24
   resolution: "@sinclair/typebox@npm:0.25.24"
@@ -2126,6 +2133,7 @@ __metadata:
     jest: 29.5.0
     lint-staged: ^13.2.0
     prettier: ^2.3.2
+    prisma: ^4.12.0
     reflect-metadata: ^0.1.13
     rxjs: ^7.2.0
     source-map-support: ^0.5.20
@@ -5808,6 +5816,18 @@ __metadata:
     ansi-styles: ^5.0.0
     react-is: ^18.0.0
   checksum: 4065356b558e6db25b4d41a01efb386935a6c06a0c9c104ef5ce59f2f476b8210edb8b3949b386e60ada0a6dc5ebcb2e6ccddc8c64dfd1a9943c3c3a9e7eaf89
+  languageName: node
+  linkType: hard
+
+"prisma@npm:^4.12.0":
+  version: 4.12.0
+  resolution: "prisma@npm:4.12.0"
+  dependencies:
+    "@prisma/engines": 4.12.0
+  bin:
+    prisma: build/index.js
+    prisma2: build/index.js
+  checksum: 826b90901391eead0aa2e1ab4539474c308f8a956b480e87594b241bfaba423ebd781b8082fc329f4e7e780f3a7162a09ac61c367d3f43382e93d506e4a66c7c
   languageName: node
   linkType: hard
 
