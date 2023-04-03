@@ -1,13 +1,12 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { UserViewModel } from '../users/types/user.view.model';
 import { User } from '@prisma/client';
 
 @Injectable()
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendUserConfirmation(user: UserViewModel | User, token: string) {
+  async sendUserConfirmation(user: any, token: string) {
     const url = `example.com/auth/confirm?code=${token}`;
 
     await this.mailerService.sendMail({
