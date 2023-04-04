@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { EmailConfirmation, User } from '@prisma/client';
+import { EmailConfirmation, Token, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { add } from 'date-fns';
 import { CreateUserDto } from '../dto/create.user.dto';
@@ -47,7 +47,9 @@ export class UserRepository {
       },
     });
   }
-
+  async findTokenByUserId(userId: string): Promise<Token | null> {
+    return this.prisma.token.findUnique({ where: { userId } });
+  }
   async findUserByEmailConfirmationCode(
     code: string,
   ): Promise<UserWithEmailConfirmation | null> {

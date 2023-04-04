@@ -19,9 +19,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     });
   }
   async validate(req: Request, payload: RtPayload) {
-    return {
-      payload,
-    };
+    return payload;
   }
   private static extractJWT(req: RequestType): string | null {
     let token = null;
