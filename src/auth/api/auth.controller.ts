@@ -109,7 +109,7 @@ export class AuthController {
     @GetRtFromCookieDecorator() rt: { refreshToken: string },
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
-    const { accessToken, refreshToken } = await this.jwtAdaptor.refreshTokin(
+    const { accessToken, refreshToken } = await this.jwtAdaptor.refreshToken(
       rtPayload,
       rt,
     );

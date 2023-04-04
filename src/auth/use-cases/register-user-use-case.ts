@@ -20,7 +20,7 @@ export class RegisterUserUseCase
     const { email, password } = command.authDto;
     // check that user with the given email does not exist
     const checkUserEmail = await this.userRepository.findUserByEmail(email);
-    if (checkUserEmail)
+    if (checkUserEmail?.emailConfirmation?.isConfirmed)
       throw new BadRequestException('This email already exists');
     // generate salt and hash
     const passwordSalt = await bcrypt.genSalt(10);

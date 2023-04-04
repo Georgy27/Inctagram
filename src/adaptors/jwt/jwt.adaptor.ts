@@ -53,7 +53,7 @@ export class JwtAdaptor {
       refreshTokenHash,
     };
   }
-  async refreshTokin(rtPayload: RtPayload, rt: { refreshToken: string }) {
+  async refreshToken(rtPayload: RtPayload, rt: { refreshToken: string }) {
     // // check if the token is valid
     await this.validateTokens(rt.refreshToken, rtPayload.userId);
     //  create new pair of tokens
