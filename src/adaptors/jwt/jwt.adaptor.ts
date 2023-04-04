@@ -11,14 +11,14 @@ export class JwtAdaptor {
       this.jwtService.signAsync(
         { userId },
         {
-          secret: this.config.get<string>('JWT_AT_SECRET'),
+          secret: this.config.get<string>('AT_SECRET'),
           expiresIn: '1h',
         },
       ),
       this.jwtService.signAsync(
         { userId },
         {
-          secret: this.config.get<string>('JWT_RT_SECRET'),
+          secret: this.config.get<string>('RT_SECRET'),
           expiresIn: '2h',
         },
       ),

@@ -11,19 +11,19 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         RtStrategy.extractJWT,
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        // ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
       secretOrKey: config.get<string>('RT_SECRET'),
-      passReqToCallback: true,
     });
   }
-  async validate(req: Request, payload: RtPayload) {
+  async validate(payload: RtPayload) {
     return payload;
   }
+
   private static extractJWT(req: RequestType): string | null {
     let token = null;
-    if (req.cookies) {
+    if (req.cookies && req.cookies.refreshToken) {
       token = req.cookies['refreshToken'];
     }
     return token;

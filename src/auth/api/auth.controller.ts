@@ -65,10 +65,6 @@ export class AuthController {
       new RegistrationEmailResendingCommand(emailDto),
     );
   }
-
-  @Post('login')
-  @AuthLoginSwaggerDecorator()
-  @HttpCode(200)
   @Post('login')
   @AuthLoginSwaggerDecorator()
   @HttpCode(200)
@@ -96,7 +92,6 @@ export class AuthController {
     @GetRtFromCookieDecorator() refreshToken: { refreshToken: string },
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log(rtPayload, refreshToken);
     return this.commandBus.execute(
       new LogoutUserCommand(rtPayload.userId, refreshToken),
     );

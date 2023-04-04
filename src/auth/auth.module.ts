@@ -8,18 +8,27 @@ import { RegisterUserUseCase } from './use-cases/register-user-use-case';
 import { RegistrationEmailResendingUseCase } from './use-cases/registration-email-resending-use-case';
 import { ConfirmRegistrationUseCase } from './use-cases/confirm-registration-use-case';
 import { LoginUserUseCase } from './use-cases/login-user-use-case';
+import { AdaptorModule } from '../adaptors/adaptor.module';
+import { AtStrategy, RtStrategy } from './strategies';
+import { LogoutUserUseCase } from './use-cases/logout-user-use-case';
 
 const useCases = [
   RegisterUserUseCase,
   ConfirmRegistrationUseCase,
   RegistrationEmailResendingUseCase,
   LoginUserUseCase,
-  LoginUserUseCase,
+  LogoutUserUseCase,
 ];
 @Module({
-  imports: [CqrsModule, MailModule, UserModule, JwtModule.register({})],
+  imports: [
+    CqrsModule,
+    MailModule,
+    UserModule,
+    AdaptorModule,
+    JwtModule.register({}),
+  ],
   controllers: [AuthController],
-  providers: [...useCases],
+  providers: [AtStrategy, RtStrategy, ...useCases],
   exports: [],
 })
 export class AuthModule {}
