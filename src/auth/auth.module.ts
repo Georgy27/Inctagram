@@ -7,11 +7,13 @@ import { UserModule } from '../user/user.module';
 import { RegisterUserUseCase } from './use-cases/register-user-use-case';
 import { RegistrationEmailResendingUseCase } from './use-cases/registration-email-resending-use-case';
 import { ConfirmRegistrationUseCase } from './use-cases/confirm-registration-use-case';
+import { LoginUserUseCase } from './use-cases/login-user-use-case';
 
 const useCases = [
   RegisterUserUseCase,
   ConfirmRegistrationUseCase,
   RegistrationEmailResendingUseCase,
+  LoginUserUseCase,
 ];
 @Module({
   imports: [CqrsModule, MailModule, UserModule, JwtModule.register({})],

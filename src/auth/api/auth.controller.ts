@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { AuthDto } from '../dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ConfirmationCodeDto } from '../dto/confirmation-code.dto';
@@ -18,7 +18,9 @@ import { CommandBus } from '@nestjs/cqrs';
 import { RegisterUserCommand } from '../use-cases/register-user-use-case';
 import { RegistrationEmailResendingCommand } from '../use-cases/registration-email-resending-use-case';
 import { ConfirmRegistrationCommand } from '../use-cases/confirm-registration-use-case';
-
+import { Response } from 'express';
+import { LoginUserCommand } from '../use-cases/login-user-use-case';
+import { LoginDto } from '../dto/login.dto';
 @ApiTags('Auth')
 @Controller('/api/auth')
 export class AuthController {
@@ -54,7 +56,19 @@ export class AuthController {
   @Post('login')
   @AuthLoginSwaggerDecorator()
   @HttpCode(200)
-  async login(@Body() authDto: AuthDto) {}
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.commandBus.execute(
+      new LoginUserCommand(loginDto),
+    );
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+    return { accessToken };
+  }
 
   @Post('logout')
   @AuthLogoutSwaggerDecorator()

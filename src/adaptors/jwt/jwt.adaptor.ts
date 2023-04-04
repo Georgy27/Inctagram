@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-
+import * as argon from 'argon2';
 @Injectable()
 export class JwtAdaptor {
   constructor(private jwtService: JwtService, private config: ConfigService) {}
@@ -34,5 +34,17 @@ export class JwtAdaptor {
     const decodedToken: any = await this.jwtService.decode(refreshToken);
     const issuedAt = new Date(decodedToken.iat * 1000).toISOString();
     return issuedAt;
+  }
+
+  async updateTokensHash(tokens: {
+    accessToken: string;
+    refreshToken: string;
+  }) {
+    const accessTokenHash = await argon.hash(tokens.accessToken);
+    const refreshTokenHash = await argon.hash(tokens.refreshToken);
+    return {
+      accessTokenHash,
+      refreshTokenHash,
+    };
   }
 }

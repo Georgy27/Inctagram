@@ -22,12 +22,12 @@ model User {
 }
 
 model Token {
-  accessToken  String
-  refreshToken String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String   @unique
+  accessTokenHash  String
+  refreshTokenHash String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String   @unique
 }
 
 model PasswordRecovery {

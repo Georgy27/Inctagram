@@ -90,4 +90,24 @@ export class UserRepository {
       },
     });
   }
+
+  async updateUserTokens(
+    userId: string,
+    tokens: { accessTokenHash: string; refreshTokenHash: string },
+  ) {
+    return this.prisma.token.upsert({
+      create: {
+        accessTokenHash: tokens.accessTokenHash,
+        refreshTokenHash: tokens.refreshTokenHash,
+        userId,
+      },
+      update: {
+        accessTokenHash: tokens.accessTokenHash,
+        refreshTokenHash: tokens.refreshTokenHash,
+      },
+      where: {
+        userId,
+      },
+    });
+  }
 }

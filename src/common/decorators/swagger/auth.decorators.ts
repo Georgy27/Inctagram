@@ -51,7 +51,7 @@ export function AuthLoginSwaggerDecorator() {
       type: FieldError,
     }),
     ApiUnauthorizedResponse({
-      description: 'The password or login is wrong',
+      description: 'The password or email is wrong',
     }),
   );
 }
