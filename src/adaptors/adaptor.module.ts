@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { JwtAdaptor } from './jwt/jwt.adaptor';
 import { JwtModule } from '@nestjs/jwt';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [JwtModule.register({})],
+  imports: [UserModule, JwtModule.register({})],
   controllers: [],
   providers: [JwtAdaptor],
   exports: [JwtAdaptor],
