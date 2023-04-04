@@ -1,6 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class MailService {
@@ -8,14 +7,15 @@ export class MailService {
 
   async sendUserConfirmation(user: any, token: string) {
     const url = `example.com/auth/confirm?code=${token}`;
-
+    console.log('Inside nodemailer');
+    console.log(user.email);
     await this.mailerService.sendMail({
       to: user.email,
       // from: '"Support Team" <support@example.com>', // override default from
       subject: 'Welcome to Nice App! Confirm your Email',
       template: './confirmation', // `.hbs` extension is appended automatically
       context: {
-        name: user.login,
+        name: 'stranger',
         url,
       },
     });

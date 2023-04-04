@@ -27,18 +27,17 @@ export class RegisterUserUseCase
     const hash = await bcrypt.hash(password, passwordSalt);
 
     const newUser = await this.userRepository.createUser(command.authDto, hash);
-    // const emailConfirmation =
-    //   await this.usersSQLRepository.getEmailConfirmationCode(newUser.email);
-    // if (!emailConfirmation)
-    //   throw new NotFoundException('confirmation code does not exist');
+
+    if (!newUser.emailConfirmation?.confirmationCode)
+      throw new NotFoundException('confirmation code does not exist');
     // // send email
-    // try {
-    //   return this.mailService.sendUserConfirmation(
-    //     newUser,
-    //     emailConfirmation.confirmationCode,
-    //   );
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      return this.mailService.sendUserConfirmation(
+        newUser,
+        newUser.emailConfirmation.confirmationCode,
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

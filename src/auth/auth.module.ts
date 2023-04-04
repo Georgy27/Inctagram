@@ -4,12 +4,19 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MailModule } from '../mail/mail.module';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
+import { RegisterUserUseCase } from './use-cases/register-user-use-case';
+import { RegistrationEmailResendingUseCase } from './use-cases/registration-email-resending-use-case';
+import { ConfirmRegistrationUseCase } from './use-cases/confirm-registration-use-case';
 
-const useCases = [];
+const useCases = [
+  RegisterUserUseCase,
+  ConfirmRegistrationUseCase,
+  RegistrationEmailResendingUseCase,
+];
 @Module({
   imports: [CqrsModule, MailModule, UserModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [],
+  providers: [...useCases],
   exports: [],
 })
 export class AuthModule {}
