@@ -21,6 +21,7 @@ import { ConfirmRegistrationCommand } from '../use-cases/confirm-registration-us
 import { Response } from 'express';
 import { LoginUserCommand } from '../use-cases/login-user-use-case';
 import { LoginDto } from '../dto/login.dto';
+import { LogginSuccessViewModel } from '../../types';
 @ApiTags('Auth')
 @Controller('/api/auth')
 export class AuthController {
@@ -56,13 +57,17 @@ export class AuthController {
   @Post('login')
   @AuthLoginSwaggerDecorator()
   @HttpCode(200)
+  @Post('login')
+  @AuthLoginSwaggerDecorator()
+  @HttpCode(200)
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
-  ) {
-    const { accessToken, refreshToken } = await this.commandBus.execute(
-      new LoginUserCommand(loginDto),
-    );
+  ): Promise<LogginSuccessViewModel> {
+    const { accessToken, refreshToken } = await this.commandBus.execute<
+      LoginUserCommand,
+      { accessToken: string; refreshToken: string }
+    >(new LoginUserCommand(loginDto));
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
