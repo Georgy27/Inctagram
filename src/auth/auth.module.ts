@@ -14,6 +14,7 @@ const useCases = [
   ConfirmRegistrationUseCase,
   RegistrationEmailResendingUseCase,
   LoginUserUseCase,
+  LoginUserUseCase,
 ];
 @Module({
   imports: [CqrsModule, MailModule, UserModule, JwtModule.register({})],

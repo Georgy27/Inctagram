@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthDto } from '../dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ConfirmationCodeDto } from '../dto/confirmation-code.dto';
@@ -22,6 +29,10 @@ import { Response } from 'express';
 import { LoginUserCommand } from '../use-cases/login-user-use-case';
 import { LoginDto } from '../dto/login.dto';
 import { LogginSuccessViewModel } from '../../types';
+import { AuthGuard } from '@nestjs/passport';
+import { RtPayload } from '../strategies/types';
+import { GetRtPayloadDecorator } from '../../common/decorators/jwt/getRtPayload.decorator';
+import { LogoutUserCommand } from '../use-cases/logout-user-use-case';
 @ApiTags('Auth')
 @Controller('/api/auth')
 export class AuthController {
@@ -75,10 +86,16 @@ export class AuthController {
     return { accessToken };
   }
 
+  @UseGuards(AuthGuard('jwt-refresh'))
   @Post('logout')
   @AuthLogoutSwaggerDecorator()
   @HttpCode(204)
-  async logout() {}
+  async logout(
+    @GetRtPayloadDecorator() rtPayload: RtPayload,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.commandBus.execute(new LogoutUserCommand(rtPayload.userId));
+  }
 
   @Post('refresh-token')
   @AuthRefreshTokenSwaggerDecorator()
