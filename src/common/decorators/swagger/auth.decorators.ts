@@ -7,12 +7,13 @@ import {
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthDto } from 'src/auth/dto/auth.dto';
+
 import { FieldError, LogginSuccessViewModel } from '../../../types';
 import { applyDecorators } from '@nestjs/common';
 import { ConfirmationCodeDto } from '../../../auth/dto/confirmation-code.dto';
 import { EmailDto } from '../../../auth/dto/email.dto';
 import { NewPasswordDto } from '../../../auth/dto/new-password.dto';
+import { AuthDto } from '../../../auth/dto/auth.dto';
 
 export function AuthRegistrationSwaggerDecorator() {
   return applyDecorators(

@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import bcrypt from 'bcrypt';
 
-import { UserRepository } from 'src/user/repositories/user.repository';
 import { MailService } from 'src/mail/mail.service';
 import { BadRequestException } from '@nestjs/common';
+import { UserRepository } from '../../user/repositories/user.repository';
 
 export class NewPasswordCommand {
   public constructor(

@@ -1558,6 +1558,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/mailparser@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@types/mailparser@npm:3.4.0"
+  dependencies:
+    "@types/node": "*"
+    iconv-lite: ^0.6.3
+  checksum: 05232ba3579b09224e5335848da27817a4cac8cc0eb622202904b62851fd61bbab7b5ca90016531e40098641351d84c2355f10cd9c9fa718da4ea2cb0e637bd0
+  languageName: node
+  linkType: hard
+
 "@types/mime@npm:*":
   version: 3.0.1
   resolution: "@types/mime@npm:3.0.1"
@@ -1576,6 +1586,15 @@ __metadata:
   version: 16.18.23
   resolution: "@types/node@npm:16.18.23"
   checksum: 00e51db28fc7a182747f37215b3f25400b1c7a8525e09fa14e55be5798891a118ebf636a49d3197335a3580fcb8222fd4ecc20c2ccff69f1c0d233fc5697465d
+  languageName: node
+  linkType: hard
+
+"@types/nodemailer@npm:^6.4.7":
+  version: 6.4.7
+  resolution: "@types/nodemailer@npm:6.4.7"
+  dependencies:
+    "@types/node": "*"
+  checksum: dc2a33a89135e04a5bea4921e8645e8453b90e3c3b05f0646f05071c5951ab697ea49ea1e503a690f04cb0a6abfc54967325c5a4036356793cfbb64ba64fb141
   languageName: node
   linkType: hard
 
@@ -2448,7 +2467,9 @@ __metadata:
     "@types/cookie-parser": ^1.4.3
     "@types/express": ^4.17.13
     "@types/jest": 29.5.0
+    "@types/mailparser": ^3.4.0
     "@types/node": 18.15.11
+    "@types/nodemailer": ^6.4.7
     "@types/passport-jwt": ^3.0.8
     "@types/passport-local": ^1.0.35
     "@types/supertest": ^2.0.11
@@ -2460,14 +2481,17 @@ __metadata:
     class-validator: ^0.14.0
     cookie-parser: ^1.4.6
     date-fns: ^2.29.3
+    emailjs-imap-client: ^3.1.0
     eslint: ^8.0.1
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^4.0.0
     husky: ^8.0.3
     jest: 29.5.0
     lint-staged: ^13.2.0
+    mailparser: ^3.6.4
     nestjs-config: ^1.4.10
     nodemailer: ^6.9.1
+    nodemailer-mock: ^2.0.1
     passport: ^0.6.0
     passport-jwt: ^4.0.1
     passport-local: ^1.0.0
@@ -2476,7 +2500,7 @@ __metadata:
     reflect-metadata: ^0.1.13
     rxjs: ^7.2.0
     source-map-support: ^0.5.20
-    supertest: ^6.1.3
+    supertest: ^6.3.3
     ts-jest: 29.0.5
     ts-loader: ^9.2.3
     ts-node: ^10.0.0
@@ -3687,6 +3711,73 @@ __metadata:
   version: 1.4.347
   resolution: "electron-to-chromium@npm:1.4.347"
   checksum: 87b60c906d6252f848f44f65f76f0d44614fbea0ad47f2e46efa069a5adb947f6e31d5a285f9433f0ba420ab70c2091951c455d6c9a12533652a5cfaad23e72d
+  languageName: node
+  linkType: hard
+
+"emailjs-addressparser@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "emailjs-addressparser@npm:2.0.3"
+  checksum: 9bb49296f059611df73218d480c54cf92c0a437d8f7367b1e6e96f040139aaee686142585b26b583ade5704627ef76438d3768262655b9faae6555b72d57308c
+  languageName: node
+  linkType: hard
+
+"emailjs-base64@npm:^1.1.2, emailjs-base64@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "emailjs-base64@npm:1.1.4"
+  checksum: b58a14cc943544118d8f88732d35120add23461501d229458067c1a4bab6bf9659bca8e178b36d4d7448f657f5eb8ff1226635eb8e52c1050e2e770fd8ff30e7
+  languageName: node
+  linkType: hard
+
+"emailjs-imap-client@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "emailjs-imap-client@npm:3.1.0"
+  dependencies:
+    emailjs-addressparser: ^2.0.2
+    emailjs-base64: ^1.1.4
+    emailjs-imap-handler: ^3.0.2
+    emailjs-mime-codec: ^2.0.8
+    emailjs-tcp-socket: ^2.0.2
+    emailjs-utf7: ^4.0.1
+    pako: ^1.0.10
+    ramda: ^0.26.1
+  checksum: cbc9a75876e67573ed192472b2e4c125ff984fa368b23e8cd53e77ab5d04d5b2b3c18ebb36181b79e8bca4fa47e9809741a0bc8267d261d7d52e3ecafc2a76f7
+  languageName: node
+  linkType: hard
+
+"emailjs-imap-handler@npm:^3.0.2":
+  version: 3.0.4
+  resolution: "emailjs-imap-handler@npm:3.0.4"
+  checksum: 2522acf1a98e6a1c29a8605e87f0f2342d70996c0b29e118d1371bc357a7cbf837409fbdd3233ba1272b5016e269f075d1b349e5d17f817d72bbb0463daf8614
+  languageName: node
+  linkType: hard
+
+"emailjs-mime-codec@npm:^2.0.8":
+  version: 2.0.9
+  resolution: "emailjs-mime-codec@npm:2.0.9"
+  dependencies:
+    emailjs-base64: ^1.1.4
+    ramda: ^0.26.1
+    text-encoding: ^0.7.0
+  checksum: ad73ef79c9d2a2aad870473fdb56bfefcf6a2c434b3f8ee42fa32f598bcee9bfd9877d7215071b2cfdcdc4247e84d43c10b9c95a67505ad5e29858866194cc19
+  languageName: node
+  linkType: hard
+
+"emailjs-tcp-socket@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "emailjs-tcp-socket@npm:2.0.2"
+  dependencies:
+    node-forge: ^0.7.5
+    ramda: ^0.25.0
+  checksum: b4a834e7d0e87a935a9efa11840dc4d838e6e9cc5bb1ef9b4ca31bfc64bf1f67b4294c5d9ecbf20d67bea87d9db491fdee390b34c694de94c2ddaefc7ae89783
+  languageName: node
+  linkType: hard
+
+"emailjs-utf7@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "emailjs-utf7@npm:4.0.1"
+  dependencies:
+    emailjs-base64: ^1.1.2
+  checksum: f17b9dfc768116edc3b16c5ffe12a4f0d276850be78a046c3999f1186022b8ef088595788c3e2e4c79e57acbf7f5506e87bccf6b00cf722b791d2355783f5149
   languageName: node
   linkType: hard
 
@@ -4955,7 +5046,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2":
+"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
   dependencies:
@@ -6336,7 +6427,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mailparser@npm:^3.3.0":
+"mailparser@npm:^3.3.0, mailparser@npm:^3.6.4":
   version: 3.6.4
   resolution: "mailparser@npm:3.6.4"
   dependencies:
@@ -7207,6 +7298,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-forge@npm:^0.7.5":
+  version: 0.7.6
+  resolution: "node-forge@npm:0.7.6"
+  checksum: 661d420847da736d82f3aad0e8ad2b5fceddc4bd5f4065b923c566e9fd68e568509677374f101c1f4321c541dcbef0864516a2a55ff03a9236d0895195dfa7aa
+  languageName: node
+  linkType: hard
+
 "node-gyp@npm:latest":
   version: 9.3.1
   resolution: "node-gyp@npm:9.3.1"
@@ -7238,6 +7336,17 @@ __metadata:
   version: 2.0.10
   resolution: "node-releases@npm:2.0.10"
   checksum: d784ecde25696a15d449c4433077f5cce620ed30a1656c4abf31282bfc691a70d9618bae6868d247a67914d1be5cc4fde22f65a05f4398cdfb92e0fc83cadfbc
+  languageName: node
+  linkType: hard
+
+"nodemailer-mock@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "nodemailer-mock@npm:2.0.1"
+  dependencies:
+    debug: ^4.3.4
+  peerDependencies:
+    nodemailer: ^6.x
+  checksum: f9dab69af80e66bfc5ad9107f73683e344cc368ddf3e22e3d087e82a1fd4f49906c797b75bb63d725eada97c28896c05f45671e41d895e7fc30e069152fcb8ac
   languageName: node
   linkType: hard
 
@@ -7527,6 +7636,13 @@ __metadata:
     ip: ^1.1.5
     netmask: ^2.0.2
   checksum: e3bd8aada70d173cd4cec1ac810fb56161678b7a597060a740c4a31d9c5f8cd95687b2d0fd90b69c0cafe5ef787404074f38042ba08c8d378fed48973f58e493
+  languageName: node
+  linkType: hard
+
+"pako@npm:^1.0.10":
+  version: 1.0.11
+  resolution: "pako@npm:1.0.11"
+  checksum: 1be2bfa1f807608c7538afa15d6f25baa523c30ec870a3228a89579e474a4d992f4293859524e46d5d87fd30fa17c5edf34dbef0671251d9749820b488660b16
   languageName: node
   linkType: hard
 
@@ -8117,6 +8233,20 @@ __metadata:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: b676f8c040cdc5b12723ad2f91414d267605b26419d5c821ff03befa817ddd10e238d22b25d604920340fd73efd8ba795465a0377c4adf45a4a41e4234e42dc4
+  languageName: node
+  linkType: hard
+
+"ramda@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "ramda@npm:0.25.0"
+  checksum: 008abbcc69aefd89a2a4a0c9f4cf9f8da2ec490a0e1e261b4c88de8540ef0c383d469bfdf71b758b559377c71bfa8efea164fdb1779169359a86b46f7cb23cb1
+  languageName: node
+  linkType: hard
+
+"ramda@npm:^0.26.1":
+  version: 0.26.1
+  resolution: "ramda@npm:0.26.1"
+  checksum: 19c2730e44c129538151ae034c89be9b2c6a4ccc7c65cff57497418bc532ce09282f98cd927c39b0b03c6bc3f1d1a12d822b7b07f96a1634f4958a6c05b7b384
   languageName: node
   linkType: hard
 
@@ -8924,7 +9054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supertest@npm:^6.1.3":
+"supertest@npm:^6.3.3":
   version: 6.3.3
   resolution: "supertest@npm:6.3.3"
   dependencies:
@@ -9047,6 +9177,13 @@ __metadata:
     glob: ^7.1.4
     minimatch: ^3.0.4
   checksum: 3b34a3d77165a2cb82b34014b3aba93b1c4637a5011807557dc2f3da826c59975a5ccad765721c4648b39817e3472789f9b0fa98fc854c5c1c7a1e632aacdc28
+  languageName: node
+  linkType: hard
+
+"text-encoding@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "text-encoding@npm:0.7.0"
+  checksum: b6109a843fb1b8748b32e1ecd6df74d370f46c13ac136bcb6ca15db70209bb0b8ec1f296ebb4b0dd9961150e205dcc044b89f8cf7657f6faef78c7569a2a81bc
   languageName: node
   linkType: hard
 

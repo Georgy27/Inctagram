@@ -105,6 +105,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('refresh-token')
+  @AuthRefreshTokenSwaggerDecorator()
   @HttpCode(200)
   async refreshToken(
     @GetRtPayloadDecorator() rtPayload: RtPayload,
