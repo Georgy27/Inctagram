@@ -6,6 +6,11 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('INCTAGRAM')
     .setDescription('API documentation for INCTAGRAM App')
     .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT-auth',
+    )
+    .addCookieAuth('refresh-token')
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

@@ -11,6 +11,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "strict": true,
+    "strictPropertyInitialization": false,
     "incremental": true,
     "skipLibCheck": true,
     "noImplicitAny": true,
