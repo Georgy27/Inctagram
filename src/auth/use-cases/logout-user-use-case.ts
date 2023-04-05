@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserRepository } from '../../user/repositories/user.repository';
-import * as argon from 'argon2';
-import { UnauthorizedException } from '@nestjs/common';
+
 import { JwtAdaptor } from '../../adaptors/jwt/jwt.adaptor';
+
 export class LogoutUserCommand {
   constructor(
     public userId: string,
@@ -20,6 +20,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
       command.refreshToken.refreshToken,
       command.userId,
     );
+
     return this.userRepository.logout(command.userId);
   }
 }

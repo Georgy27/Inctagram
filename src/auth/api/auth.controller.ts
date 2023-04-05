@@ -35,6 +35,8 @@ import { GetRtPayloadDecorator } from '../../common/decorators/jwt/getRtPayload.
 import { LogoutUserCommand } from '../use-cases/logout-user-use-case';
 import { GetRtFromCookieDecorator } from '../../common/decorators/jwt/getRtFromCookie.decorator';
 import { JwtAdaptor } from '../../adaptors/jwt/jwt.adaptor';
+import { PasswordRecoveryCommand } from '../use-cases/password-recovery.use-case';
+import { NewPasswordCommand } from '../use-cases/new-password.use-case';
 @ApiTags('Auth')
 @Controller('/api/auth')
 export class AuthController {
@@ -123,10 +125,20 @@ export class AuthController {
   @Post('password-recovery')
   @AuthPasswordRecoverySwaggerDecorator()
   @HttpCode(204)
-  async passwordRecovery(@Body() emailDto: EmailDto) {}
+  async passwordRecovery(@Body() emailDto: EmailDto) {
+    const { email } = emailDto;
+
+    return this.commandBus.execute(new PasswordRecoveryCommand(email));
+  }
 
   @Post('new-password')
   @AuthNewPasswordSwaggerDecorator()
   @HttpCode(204)
-  async newPassword(@Body() newPasswordDto: NewPasswordDto) {}
+  async newPassword(@Body() newPasswordDto: NewPasswordDto) {
+    const { newPassword, recoveryCode } = newPasswordDto;
+
+    return this.commandBus.execute(
+      new NewPasswordCommand(newPassword, recoveryCode),
+    );
+  }
 }

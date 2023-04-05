@@ -11,21 +11,26 @@ import { LoginUserUseCase } from './use-cases/login-user-use-case';
 import { AdaptorModule } from '../adaptors/adaptor.module';
 import { AtStrategy, RtStrategy } from './strategies';
 import { LogoutUserUseCase } from './use-cases/logout-user-use-case';
+import { PasswordRecoveryUserUseCase } from './use-cases/password-recovery.use-case';
+import { NewPasswordUseCase } from './use-cases/new-password.use-case';
 
 const useCases = [
-  RegisterUserUseCase,
-  ConfirmRegistrationUseCase,
   RegistrationEmailResendingUseCase,
+  PasswordRecoveryUserUseCase,
+  ConfirmRegistrationUseCase,
+  RegisterUserUseCase,
+  NewPasswordUseCase,
   LoginUserUseCase,
   LogoutUserUseCase,
 ];
+
 @Module({
   imports: [
     CqrsModule,
     MailModule,
     UserModule,
-    AdaptorModule,
     JwtModule.register({}),
+    AdaptorModule,
   ],
   controllers: [AuthController],
   providers: [AtStrategy, RtStrategy, ...useCases],

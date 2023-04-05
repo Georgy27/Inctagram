@@ -75,7 +75,39 @@ export class UserRepository {
       },
     });
   }
-
+  async findUserByConfirmationOrRecoveryCode(code: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        OR: [
+          {
+            emailConfirmation: {
+              confirmationCode: code,
+            },
+          },
+          {
+            passwordRecovery: {
+              recoveryCode: code,
+            },
+          },
+        ],
+      },
+      include: {
+        emailConfirmation: {
+          select: {
+            confirmationCode: true,
+            expirationDate: true,
+            isConfirmed: true,
+          },
+        },
+        passwordRecovery: {
+          select: {
+            recoveryCode: true,
+            expirationDate: true,
+          },
+        },
+      },
+    });
+  }
   async updateEmailConfirmationCode(
     userEmail: string,
   ): Promise<EmailConfirmation> {
@@ -117,7 +149,32 @@ export class UserRepository {
       },
     });
   }
+  async updatePasswordRecoveryCode(userId: string, recoveryCode: string) {
+    return this.prisma.passwordRecovery.update({
+      where: { userId },
+      data: {
+        recoveryCode,
+        expirationDate: add(new Date(), {
+          minutes: 10,
+        }).toISOString(),
+      },
+    });
+  }
 
+  async updatePassword(id: string, hash: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        hash,
+        passwordRecovery: {
+          update: {
+            recoveryCode: null,
+            expirationDate: null,
+          },
+        },
+      },
+    });
+  }
   async logout(userId: string): Promise<boolean> {
     await this.prisma.token.updateMany({
       where: {

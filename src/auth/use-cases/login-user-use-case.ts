@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtAdaptor } from '../../adaptors/jwt/jwt.adaptor';
 import { UserRepository } from '../../user/repositories/user.repository';
+import { LoginDto } from '../dto/login.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from '../dto/login.dto';
 export class LoginUserCommand {
   constructor(public loginDto: LoginDto) {}
 }
