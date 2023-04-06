@@ -75,5 +75,21 @@ describe('AuthsController', () => {
         expect(userEmailConfirmation?.isConfirmed).toBeTruthy();
       });
     });
+    describe('issues with registration', () => {
+      describe('The user with the given email already exists', () => {
+        it('should create user with the same email', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration')
+            .send(authStub.registration.validUser);
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+      });
+    });
   });
 });
