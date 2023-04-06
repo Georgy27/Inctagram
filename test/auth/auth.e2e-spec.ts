@@ -7,6 +7,7 @@ import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { MailBoxImap } from './helpers/imap.service';
 import { isUUID } from 'class-validator';
+import { authStub } from './stubs/auth.stub';
 describe('AuthsController', () => {
   jest.setTimeout(60 * 1000);
   let app: INestApplication;
@@ -35,28 +36,44 @@ describe('AuthsController', () => {
   beforeAll(async () => {
     await prisma.user.deleteMany({});
   });
-  it('should register user', async () => {
-    const response = await request(httpServer)
-      .post('/api/auth/registration')
-      .send({
-        email: 'Aegoraa@yandex.ru',
-        password: 'testpassword',
-      });
-    expect(response.status).toBe(204);
-    expect(response.body).toEqual({});
-  });
-  it('should read email and get validConfirmationCode', async () => {
-    const mailBox: MailBoxImap = expect.getState().mailBox;
-    const email = await mailBox.waitNewMessage(0.5);
-    const html = await mailBox.getMessageHtml(email);
-    expect(html).toBeDefined();
-    expect(html).not.toBeNull();
 
-    console.log(html);
-    const validConfirmationCode = html!.split('code=')[1].split('"')[0];
-    console.log(validConfirmationCode);
-    expect(validConfirmationCode).toBeDefined();
-    expect(isUUID(validConfirmationCode)).toBeTruthy();
-    expect.setState({ validConfirmationCode });
+  describe('As an unauthorised user, I want to register in the system to create the profile ', () => {
+    describe('The user successfully registered and his/her email is confirmed', () => {
+      it('should create new User and return 204 status code /api/auth/registration', async () => {
+        const response = await request(httpServer)
+          .post('/api/auth/registration')
+          .send(authStub.registration.validUser);
+        expect(response.status).toBe(204);
+        expect(response.body).toEqual({});
+      });
+      it('should read email and get validConfirmationCode', async () => {
+        const mailBox: MailBoxImap = expect.getState().mailBox;
+        const email = await mailBox.waitNewMessage(0.5);
+        const html = await mailBox.getMessageHtml(email);
+        expect(html).toBeDefined();
+        expect(html).not.toBeNull();
+
+        const validConfirmationCode = html!.split('code=')[1].split('"')[0];
+        expect(validConfirmationCode).toBeDefined();
+        expect(isUUID(validConfirmationCode)).toBeTruthy();
+        expect.setState({ validConfirmationCode });
+      });
+      it('should send validConfirmationCode to /api/auth/registration-confirmation', async () => {
+        const validConfirmationCode = expect.getState().validConfirmationCode;
+        const response = await request(httpServer)
+          .post('/api/auth/registration-confirmation')
+          .send({ code: validConfirmationCode });
+        expect(response.status).toBe(204);
+        expect(response.body).toEqual({});
+      });
+      it('should have user emailConfirmation isConfirmed to be true', async () => {
+        const userEmailConfirmation = await prisma.emailConfirmation.findUnique(
+          {
+            where: { userEmail: process.env.IMAP_YANDEX_EMAIL },
+          },
+        );
+        expect(userEmailConfirmation?.isConfirmed).toBeTruthy();
+      });
+    });
   });
 });
