@@ -230,6 +230,60 @@ describe('AuthsController', () => {
           expect(response.body.message).toHaveLength(1);
         });
       });
+      describe('The user send incorrect data during registration-confirmation', () => {
+        it('should return 400 if the code is empty', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration-confirmation')
+            .send({});
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration-confirmation',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('should return 400 if the code is of incorrect type', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration-confirmation')
+            .send({ code: true });
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration-confirmation',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+      });
+      describe('The user send incorrect data during registration-email-resending', () => {
+        it('should return 400 if the email is empty', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration-email-resending')
+            .send({});
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration-email-resending',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('should return 400 if the email is of incorrect type', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration-email-resending')
+            .send({
+              email: 'incorrect-email',
+            });
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration-email-resending',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+      });
     });
   });
 });
