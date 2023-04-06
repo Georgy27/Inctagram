@@ -77,7 +77,7 @@ describe('AuthsController', () => {
       });
     });
     describe('Alternative scenarios', () => {
-      describe('The user with the given email already exists', () => {
+      describe('The user tries to register with the same email', () => {
         it('should fail to create a user with the same email', async () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
@@ -87,6 +87,33 @@ describe('AuthsController', () => {
             statusCode: 400,
             message: expect.any(Array),
             path: '/api/auth/registration',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+      });
+      describe('The user tries to confirm an email with wrong code', () => {
+        const validConfirmationCode = expect.getState().validConfirmationCode;
+        it('should fail to confirm an email that was already confirmed', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration-confirmation')
+            .send({ code: validConfirmationCode });
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration-confirmation',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('should fail to confirm an email if the code is incorrect', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration-confirmation')
+            .send({ code: '123' });
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration-confirmation',
           });
           expect(response.body.message).toHaveLength(1);
         });
@@ -101,6 +128,20 @@ describe('AuthsController', () => {
             });
           expect(response.status).toBe(204);
         });
+        it('should send 404 if the User does not exist', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration-email-resending')
+            .send({
+              email: 'Random123@yandex.ru',
+            });
+          expect(response.status).toBe(404);
+          expect(response.body).toEqual({
+            statusCode: 404,
+            message: expect.any(Array),
+            path: '/api/auth/registration-email-resending',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
         it('should send new email to the user /api/auth/registration-email-resending', async () => {
           const response = await request(httpServer)
             .post('/api/auth/registration-email-resending')
@@ -108,6 +149,26 @@ describe('AuthsController', () => {
               email: 'Aegoraaa@yandex.ru',
             });
           expect(response.status).toBe(204);
+        });
+        it('should send 404 if the User does exist but has been confirmed', async () => {
+          await prisma.emailConfirmation.update({
+            where: { userEmail: 'Aegoraaa@yandex.ru' },
+            data: {
+              isConfirmed: true,
+            },
+          });
+          const response = await request(httpServer)
+            .post('/api/auth/registration-email-resending')
+            .send({
+              email: 'Aegoraaa@yandex.ru',
+            });
+          expect(response.status).toBe(404);
+          expect(response.body).toEqual({
+            statusCode: 404,
+            message: expect.any(Array),
+            path: '/api/auth/registration-email-resending',
+          });
+          expect(response.body.message).toHaveLength(1);
         });
       });
       describe('The user send incorrect data during registration', () => {
