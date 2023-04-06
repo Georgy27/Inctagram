@@ -8,6 +8,7 @@ import { INestApplication } from '@nestjs/common';
 import { MailBoxImap } from './helpers/imap.service';
 import { isUUID } from 'class-validator';
 import { authStub } from './stubs/auth.stub';
+import { helperFunctionsForTesting } from './helpers/helper-functions';
 describe('AuthsController', () => {
   jest.setTimeout(60 * 1000);
   let app: INestApplication;
@@ -75,12 +76,90 @@ describe('AuthsController', () => {
         expect(userEmailConfirmation?.isConfirmed).toBeTruthy();
       });
     });
-    describe('issues with registration', () => {
+    describe('Alternative scenarios', () => {
       describe('The user with the given email already exists', () => {
-        it('should create user with the same email', async () => {
+        it('should fail to create a user with the same email', async () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send(authStub.registration.validUser);
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+      });
+      describe('The user did not receive email and tries to send it again', () => {
+        it('should register user with new email', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration')
+            .send({
+              email: 'Aegoraaa@yandex.ru',
+              password: 'newuser',
+            });
+          expect(response.status).toBe(204);
+        });
+        it('should send new email to the user /api/auth/registration-email-resending', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration-email-resending')
+            .send({
+              email: 'Aegoraaa@yandex.ru',
+            });
+          expect(response.status).toBe(204);
+        });
+      });
+      describe('The user send incorrect data during registration', () => {
+        it('should return 400 status code and array of error because the data was not sent', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration')
+            .send({});
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration',
+          });
+          expect(response.body.message).toHaveLength(2);
+        });
+        it('should return 400 status code and array of error because the data was incorrect', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration')
+            .send({
+              email: 'email',
+              password: 123456,
+            });
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration',
+          });
+          expect(response.body.message).toHaveLength(2);
+        });
+        it('should return 400 status code because the password was too short', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration')
+            .send({
+              email: 'correct@email.com',
+              password: helperFunctionsForTesting.generateString(4),
+            });
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('should return 400 status code because the password was too long', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration')
+            .send({
+              email: 'correct@email.com',
+              password: helperFunctionsForTesting.generateString(21),
+            });
           expect(response.status).toBe(400);
           expect(response.body).toEqual({
             statusCode: 400,
