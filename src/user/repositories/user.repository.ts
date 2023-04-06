@@ -28,6 +28,15 @@ export class UserRepository {
       update: {
         email: createUserDto.email,
         hash: hash,
+        emailConfirmation: {
+          update: {
+            confirmationCode: randomUUID(),
+            expirationDate: add(new Date(), {
+              minutes: 1,
+            }).toISOString(),
+            isConfirmed: false,
+          },
+        },
       },
       where: { email: createUserDto.email },
       select: {
