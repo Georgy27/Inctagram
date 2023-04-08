@@ -183,7 +183,7 @@ describe('AuthsController', () => {
             message: expect.any(Array),
             path: '/api/auth/registration',
           });
-          expect(response.body.message).toHaveLength(2);
+          expect(response.body.message).toHaveLength(3);
         });
         it('should return 400 status code and array of error because the data was incorrect', async () => {
           const response = await request(httpServer)
@@ -224,6 +224,38 @@ describe('AuthsController', () => {
               userName: 'correct',
               email: 'correct@email.com',
               password: helperFunctionsForTesting.generateString(21),
+            });
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('should return 400 status code because the userName was too short', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration')
+            .send({
+              userName: helperFunctionsForTesting.generateString(5),
+              email: 'correct@email.com',
+              password: 'correct123',
+            });
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/registration',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('should return 400 status code because the userName was too long', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/registration')
+            .send({
+              userName: helperFunctionsForTesting.generateString(31),
+              email: 'correct@email.com',
+              password: 'correct123',
             });
           expect(response.status).toBe(400);
           expect(response.body).toEqual({
