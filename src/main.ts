@@ -11,7 +11,6 @@ async function bootstrap() {
   app.use(cookieParser());
 
   setupSwagger(app);
-  setupSwagger(app);
   useGlobalPipes(app);
   useGlobalFilters(app);
   await app.listen(4000);

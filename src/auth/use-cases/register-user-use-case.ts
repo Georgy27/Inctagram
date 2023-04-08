@@ -4,6 +4,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { MailService } from '../../mail/mail.service';
 import { UserRepository } from '../../user/repositories/user.repository';
+import { BcryptAdaptor } from '../../adaptors/bcrypt/bcrypt.adaptor';
 
 export class RegisterUserCommand {
   constructor(public authDto: AuthDto) {}
@@ -15,16 +16,21 @@ export class RegisterUserUseCase
   constructor(
     private readonly userRepository: UserRepository,
     private mailService: MailService,
+    private bcryptAdaptor: BcryptAdaptor,
   ) {}
   async execute(command: RegisterUserCommand) {
-    const { email, password } = command.authDto;
-    // check that user with the given email does not exist
+    const { email, password, userName } = command.authDto;
+    // check that user with the given email or userName does not exist
     const checkUserEmail = await this.userRepository.findUserByEmail(email);
-    if (checkUserEmail?.emailConfirmation?.isConfirmed)
+    if (checkUserEmail)
       throw new BadRequestException('This email already exists');
+    const checkUserByUserName = await this.userRepository.findUserByUserName(
+      userName,
+    );
+    if (checkUserByUserName)
+      throw new BadRequestException('This userName already exists');
     // generate salt and hash
-    const passwordSalt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, passwordSalt);
+    const hash = await this.bcryptAdaptor.generateSaltAndHash(password);
 
     const newUser = await this.userRepository.createUser(command.authDto, hash);
 
