@@ -19,16 +19,27 @@ model User {
   updatedAt         DateTime           @updatedAt
   passwordRecovery  PasswordRecovery?
   emailConfirmation EmailConfirmation?
-  token             Token?
+  deviceSessions    DeviceSessions[]
 }
 
 model Token {
   accessTokenHash  String?
   refreshTokenHash String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String   @unique
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deviceSessions   DeviceSessions? @relation(fields: [deviceSessionsId], references: [deviceId], onDelete: Cascade)
+  deviceSessionsId String          @unique
+}
+
+model DeviceSessions {
+  ip         String
+  deviceName String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deviceId   String   @unique
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?
+  token      Token?
 }
 
 model PasswordRecovery {
