@@ -123,6 +123,7 @@ describe('AuthsController', () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
+              userName: 'George123',
               email: 'Aegoraaa@yandex.ru',
               password: 'newuser',
             });
@@ -188,6 +189,7 @@ describe('AuthsController', () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
+              userName: true,
               email: 'email',
               password: 123456,
             });
@@ -197,12 +199,13 @@ describe('AuthsController', () => {
             message: expect.any(Array),
             path: '/api/auth/registration',
           });
-          expect(response.body.message).toHaveLength(2);
+          expect(response.body.message).toHaveLength(3);
         });
         it('should return 400 status code because the password was too short', async () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
+              userName: 'correct',
               email: 'correct@email.com',
               password: helperFunctionsForTesting.generateString(4),
             });
@@ -218,6 +221,7 @@ describe('AuthsController', () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
+              userName: 'correct',
               email: 'correct@email.com',
               password: helperFunctionsForTesting.generateString(21),
             });
