@@ -4,8 +4,12 @@ import { DeviceSessionsController } from './api/device-sessions.controller';
 import { CqrsModule } from '@nestjs/cqrs';
 import { AllUserDevicesWithActiveSessionsUseCase } from './use-cases/all-user-devices-with-active-sessions.use-case';
 import { AdaptorModule } from '../adaptors/adaptor.module';
+import { DeleteAllDeviceSessionsButActiveUseCase } from './use-cases/delete-all-device-sessions-but-active.use-case';
 
-const useCases = [AllUserDevicesWithActiveSessionsUseCase];
+const useCases = [
+  AllUserDevicesWithActiveSessionsUseCase,
+  DeleteAllDeviceSessionsButActiveUseCase,
+];
 @Module({
   imports: [CqrsModule, forwardRef(() => AdaptorModule)],
   controllers: [DeviceSessionsController],
