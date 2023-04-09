@@ -22,13 +22,17 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     private readonly deviceSessionsRepository: DeviceSessionsRepository,
   ) {}
   async execute(command: LoginUserCommand) {
-    // find user and check if its banned
+    // find user
     const user = await this.userRepository.findUserByEmail(
       command.loginDto.email,
     );
     if (!user)
       throw new UnauthorizedException(
         'User with the given email does not exist',
+      );
+    if (!user?.emailConfirmation?.isConfirmed)
+      throw new UnauthorizedException(
+        'Need to confirm an email in order to enter in the system',
       );
     const checkPassword = await bcrypt.compare(
       command.loginDto.password,
