@@ -23,7 +23,7 @@ export class DeleteDeviceSessionUseCase
     // validate token
     await this.jwtAdaptor.validateTokens(
       command.refreshToken,
-      command.rtPayload.deviceId,
+      command.deviceId,
     );
 
     const isSession = await this.deviceSessionsRepository.findSessionByDeviceId(
