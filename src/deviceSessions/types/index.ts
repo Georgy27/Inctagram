@@ -9,4 +9,6 @@ export class DeviceViewModel {
   lastActiveDate: Date;
   @ApiProperty()
   deviceId: string;
+  @ApiProperty()
+  isCurrent: boolean;
 }

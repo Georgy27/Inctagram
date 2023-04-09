@@ -27,6 +27,7 @@ export class AllUserDevicesWithActiveSessionsUseCase
     );
     return this.deviceSessionsRepository.findAllActiveSessions(
       command.rtPayload.userId,
+      command.rtPayload.deviceId,
     );
   }
 }

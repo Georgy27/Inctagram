@@ -63,8 +63,9 @@ export class DeviceSessionsRepository {
   }
   async findAllActiveSessions(
     userId: string,
-  ): Promise<DeviceViewModel[] | null> {
-    return this.prisma.deviceSession.findMany({
+    deviceId: string,
+  ): Promise<DeviceViewModel[]> {
+    const allActiveSessions = await this.prisma.deviceSession.findMany({
       where: { userId },
       select: {
         ip: true,
@@ -72,6 +73,13 @@ export class DeviceSessionsRepository {
         lastActiveDate: true,
         deviceId: true,
       },
+    });
+    return allActiveSessions.map((session) => {
+      if (session.deviceId === deviceId) {
+        return { ...session, isCurrent: true };
+      } else {
+        return { ...session, isCurrent: false };
+      }
     });
   }
   async deleteAllSessionsExceptCurrent(userId: string, deviceId: string) {
