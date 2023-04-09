@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { LoginDto } from '../../auth/dto/login.dto';
-import { Token } from '@prisma/client';
+import { DeviceSession, Token } from '@prisma/client';
 import { DeviceViewModel } from '../types';
 
 @Injectable()
@@ -82,5 +82,9 @@ export class DeviceSessionsRepository {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async findSessionByDeviceId(deviceId: string): Promise<DeviceSession | null> {
+    return this.prisma.deviceSession.findUnique({ where: { deviceId } });
   }
 }

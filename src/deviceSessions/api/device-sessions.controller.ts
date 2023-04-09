@@ -20,6 +20,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AllUserDevicesWithActiveSessionsCommand } from '../use-cases/all-user-devices-with-active-sessions.use-case';
 import { DeviceViewModel } from '../types';
 import { DeleteAllDeviceSessionsButActiveCommand } from '../use-cases/delete-all-device-sessions-but-active.use-case';
+import { DeleteDeviceSessionCommand } from '../use-cases/delete-device-session.use-case';
 
 @ApiTags('DeviceSessions')
 @Controller('/api/sessions/devices')
@@ -67,5 +68,13 @@ export class DeviceSessionsController {
     @Param('deviceId') deviceId: string,
     @GetRtPayloadDecorator() rtPayload: RtPayload,
     @GetRtFromCookieDecorator() refreshToken: { refreshToken: string },
-  ) {}
+  ) {
+    return this.commandBus.execute(
+      new DeleteDeviceSessionCommand(
+        rtPayload,
+        refreshToken.refreshToken,
+        deviceId,
+      ),
+    );
+  }
 }
