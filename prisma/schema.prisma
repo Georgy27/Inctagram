@@ -32,14 +32,14 @@ model Token {
 }
 
 model DeviceSession {
-  ip         String
-  deviceName String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  deviceId   String   @unique
-  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String?
-  token      Token?
+  ip             String
+  deviceName     String
+  createdAt      DateTime @default(now())
+  lastActiveDate DateTime @updatedAt
+  deviceId       String   @unique
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?
+  token          Token?
 }
 
 model PasswordRecovery {
