@@ -2,6 +2,7 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiCookieAuth,
+  ApiHideProperty,
   ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,

@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthDto } from '../dto/auth.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiHideProperty, ApiTags } from '@nestjs/swagger';
 import { ConfirmationCodeDto } from '../dto/confirmation-code.dto';
 import { EmailDto } from '../dto/email.dto';
 import { NewPasswordDto } from '../dto/new-password.dto';
@@ -23,7 +23,7 @@ import {
   AuthRegistrationConfirmationSwaggerDecorator,
   AuthRegistrationEmailResendingSwaggerDecorator,
   AuthRegistrationSwaggerDecorator,
-} from '../../common/decorators/swagger/auth.decorators';
+} from '../../common/decorators/swagger/auth.decorator';
 import { CommandBus } from '@nestjs/cqrs';
 import { RegisterUserCommand } from '../use-cases/register-user-use-case';
 import { RegistrationEmailResendingCommand } from '../use-cases/registration-email-resending-use-case';
@@ -40,6 +40,7 @@ import { GetRtFromCookieDecorator } from '../../common/decorators/jwt/getRtFromC
 import { JwtAdaptor } from '../../adaptors/jwt/jwt.adaptor';
 import { PasswordRecoveryCommand } from '../use-cases/password-recovery.use-case';
 import { NewPasswordCommand } from '../use-cases/new-password.use-case';
+import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 @ApiTags('Auth')
 @Controller('/api/auth')
 export class AuthController {
@@ -79,7 +80,8 @@ export class AuthController {
   @HttpCode(200)
   async login(
     @Body() loginDto: LoginDto,
-    @Ip() ip: string,
+    @Ip()
+    ip: string,
     @Res({ passthrough: true }) res: Response,
     @Headers('user-agent') userAgent: string,
   ): Promise<LogginSuccessViewModel> {

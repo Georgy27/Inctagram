@@ -11,19 +11,40 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetRtPayloadDecorator } from '../../common/decorators/jwt/getRtPayload.decorator';
 import { RtPayload } from '../../auth/strategies/types';
 import { GetRtFromCookieDecorator } from '../../common/decorators/jwt/getRtFromCookie.decorator';
+import {
+  DeleteAllDevicesSessionsButActiveSwaggerDecorator,
+  DeleteDeviceSessionSwaggerDecorator,
+  GetAllDevicesSwaggerDecorator,
+} from '../../common/decorators/swagger/device-sessions.decorator';
+import { ApiTags } from '@nestjs/swagger';
+import { AllUserDevicesWithActiveSessionsCommand } from '../use-cases/all-user-devices-with-active-sessions.use-case';
+import { DeviceViewModel } from '../types';
 
+@ApiTags('DeviceSessions')
 @Controller('/api/sessions/devices')
 export class DeviceSessionsController {
   constructor(private commandBus: CommandBus) {}
   @UseGuards(AuthGuard('jwt-refresh'))
   @Get()
+  @GetAllDevicesSwaggerDecorator()
   async getAllDevicesForUserId(
     @GetRtPayloadDecorator() rtPayload: RtPayload,
     @GetRtFromCookieDecorator() refreshToken: { refreshToken: string },
-  ) {}
+  ) {
+    return this.commandBus.execute<
+      AllUserDevicesWithActiveSessionsCommand,
+      Promise<DeviceViewModel[] | null>
+    >(
+      new AllUserDevicesWithActiveSessionsCommand(
+        rtPayload,
+        refreshToken.refreshToken,
+      ),
+    );
+  }
 
   @UseGuards(AuthGuard('jwt-refresh'))
   @Delete()
+  @DeleteAllDevicesSessionsButActiveSwaggerDecorator()
   @HttpCode(204)
   async deleteAllDevicesSessionsButActive(
     @GetRtPayloadDecorator() rtPayload: RtPayload,
@@ -32,6 +53,7 @@ export class DeviceSessionsController {
 
   @UseGuards(AuthGuard('jwt-refresh'))
   @Delete(':deviceId')
+  @DeleteDeviceSessionSwaggerDecorator()
   @HttpCode(204)
   async deleteDeviceSessionById(
     @Param('deviceId') deviceId: string,
