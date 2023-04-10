@@ -11,7 +11,6 @@ import { authStub } from './stubs/auth.stub';
 import { delay, helperFunctionsForTesting } from './helpers/helper-functions';
 import { JwtService } from '@nestjs/jwt';
 import cookieParser from 'cookie-parser';
-import { response } from 'express';
 
 describe('AuthsController', () => {
   jest.setTimeout(60 * 1000);
@@ -416,7 +415,6 @@ describe('AuthsController', () => {
       });
       it('should not find devices if old refreshToken is used', async () => {
         const token_1 = expect.getState().token_1.headers['set-cookie'];
-        const token_2 = expect.getState().token_2.headers['set-cookie'];
 
         const response = await request(httpServer)
           .get('/api/sessions/devices')
@@ -433,30 +431,3 @@ describe('AuthsController', () => {
     });
   });
 });
-
-// describe('Alternative log in scenarios', () => {
-//   describe('It should prepare the data', () => {
-//     it('should register the user');
-//     describe('The user tries to refresh tokens /api/auth/refresh-token', () => {
-//       const test = expect.getState().token_1;
-//       console.log(test);
-//       const token_1 = expect.getState().token_1.headers['set-cookie'][0];
-//       const RtPayload_1 = expect.getState().RtPayload_1;
-//
-//       it('successfully refreshes tokens', async () => {
-//         const response = await request(httpServer)
-//             .post('/api/refresh-token')
-//             .set('Cookie', token_1);
-//         expect(response.status).toBe(200);
-//         expect(isUUID(response.body.accessToken));
-//         expect(response.headers['set-cookie']).toBeDefined();
-//       });
-//       it('should not find device session if old refreshToken is used', async () => {
-//         const session = await prisma.deviceSession.findUnique({
-//           where: { deviceId: RtPayload_1.deviceId },
-//         });
-//         expect(session).toBeNull();
-//       });
-//     });
-//   });
-// });
