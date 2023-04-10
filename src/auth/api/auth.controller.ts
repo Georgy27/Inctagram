@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthDto } from '../dto/auth.dto';
-import { ApiHideProperty, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ConfirmationCodeDto } from '../dto/confirmation-code.dto';
 import { EmailDto } from '../dto/email.dto';
 import { NewPasswordDto } from '../dto/new-password.dto';
@@ -40,7 +40,7 @@ import { GetRtFromCookieDecorator } from '../../common/decorators/jwt/getRtFromC
 import { JwtAdaptor } from '../../adaptors/jwt/jwt.adaptor';
 import { PasswordRecoveryCommand } from '../use-cases/password-recovery.use-case';
 import { NewPasswordCommand } from '../use-cases/new-password.use-case';
-import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+
 @ApiTags('Auth')
 @Controller('/api/auth')
 export class AuthController {

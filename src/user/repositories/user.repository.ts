@@ -159,4 +159,7 @@ export class UserRepository {
       },
     });
   }
+  async clearUsers() {
+    return this.prisma.user.deleteMany({});
+  }
 }
