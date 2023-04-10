@@ -44,7 +44,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
     const deviceId = randomUUID();
     const tokens = await this.jwtAdaptor.getTokens(
       user.id,
-      user.userName,
+      user.username,
       deviceId,
     );
     const hashedTokens = await this.jwtAdaptor.updateTokensHash(tokens);

@@ -19,13 +19,13 @@ export class RegisterUserUseCase
     private bcryptAdaptor: BcryptAdaptor,
   ) {}
   async execute(command: RegisterUserCommand) {
-    const { email, password, userName } = command.authDto;
+    const { email, password, username } = command.authDto;
     // check that user with the given email or userName does not exist
     const checkUserEmail = await this.userRepository.findUserByEmail(email);
     if (checkUserEmail)
       throw new BadRequestException('This email already exists');
     const checkUserByUserName = await this.userRepository.findUserByUserName(
-      userName,
+      username,
     );
     if (checkUserByUserName)
       throw new BadRequestException('This userName already exists');

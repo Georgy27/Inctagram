@@ -80,7 +80,7 @@ describe('AuthsController', () => {
         expect(userEmailConfirmation?.isConfirmed).toBeTruthy();
       });
     });
-    describe('Alternative scenarios', () => {
+    describe('Alternative registration scenarios', () => {
       describe('The user tries to register with the same email', () => {
         it('should fail to create a user with the same email', async () => {
           const response = await request(httpServer)
@@ -326,13 +326,17 @@ describe('AuthsController', () => {
       });
     });
   });
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // LOGIN
+
   describe('As an unauthorized user, I want to log in', () => {
     describe('drop database', () => {
       it('should drop database', async () => {
         await prisma.user.deleteMany({});
       });
     });
-    describe('The user successfully log in', () => {
+    describe('The user successfully logs in', () => {
       it('should prepare data', async () => {
         // create user
         const response = await request(httpServer)
@@ -374,22 +378,45 @@ describe('AuthsController', () => {
 
         expect.setState({ token_1 });
       });
-      it('should have deviceSession created', async () => {
+      it('should have created deviceSessions', async () => {
         const token_1 = expect.getState().token_1.headers['set-cookie'][0];
         const cleanToken = token_1.split('refreshToken=')[1].split(';')[0];
-        const RtPayload: any = await jwtService.decode(cleanToken);
+        const RtPayload_1: any = await jwtService.decode(cleanToken);
+
+        expect.setState({ RtPayload_1 });
 
         const session = await prisma.deviceSession.findUnique({
-          where: { deviceId: RtPayload.deviceId },
+          where: { deviceId: RtPayload_1.deviceId },
         });
         expect(session).toBeDefined();
 
         const allSessions = await prisma.deviceSession.findMany({
-          where: { userId: RtPayload.userID },
+          where: { userId: RtPayload_1.userID },
         });
         expect(allSessions).toBeDefined();
         // expect(allSessions).toBe(Array);
         expect(allSessions).toHaveLength(3);
+      });
+    });
+    describe('Alternative log in scenarios', () => {
+      describe('The user tries to refresh tokens /api/auth/refresh-token', () => {
+        const token_1 = expect.getState().token_1.headers['set-cookie'][0];
+        const RtPayload_1 = expect.getState().RtPayload_1;
+
+        it('successfully refreshes tokens', async () => {
+          const response = await request(httpServer)
+            .post('/api/refresh-token')
+            .set('Cookie', token_1);
+          expect(response.status).toBe(200);
+          expect(isUUID(response.body.accessToken));
+          expect(response.headers['set-cookie']).toBeDefined();
+        });
+        it('should not find device session if old refreshToken is used', async () => {
+          const session = await prisma.deviceSession.findUnique({
+            where: { deviceId: RtPayload_1.deviceId },
+          });
+          expect(session).toBeNull();
+        });
       });
     });
   });
