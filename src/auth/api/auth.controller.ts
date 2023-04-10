@@ -85,7 +85,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Headers('user-agent') userAgent: string,
   ): Promise<LogginSuccessViewModel> {
-    if (!userAgent) throw new UnauthorizedException();
+    // if (!userAgent) throw new UnauthorizedException();
 
     const { accessToken, refreshToken } = await this.commandBus.execute<
       LoginUserCommand,

@@ -38,7 +38,8 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
       command.loginDto.password,
       user.hash,
     );
-    if (!checkPassword) throw new UnauthorizedException();
+    if (!checkPassword)
+      throw new UnauthorizedException('passwords do not match');
     // tokens
     const deviceId = randomUUID();
     const tokens = await this.jwtAdaptor.getTokens(

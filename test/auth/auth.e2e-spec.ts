@@ -9,11 +9,14 @@ import { MailBoxImap } from './helpers/imap.service';
 import { isUUID } from 'class-validator';
 import { authStub } from './stubs/auth.stub';
 import { helperFunctionsForTesting } from './helpers/helper-functions';
+import { JwtService } from '@nestjs/jwt';
+
 describe('AuthsController', () => {
   jest.setTimeout(60 * 1000);
   let app: INestApplication;
   let httpServer: any;
   let prisma: PrismaService;
+  let jwtService: JwtService;
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -28,6 +31,7 @@ describe('AuthsController', () => {
     expect.setState({ mailBox });
 
     prisma = moduleRef.get(PrismaService);
+    jwtService = moduleRef.get(JwtService);
     httpServer = app.getHttpServer();
   });
 
@@ -319,6 +323,73 @@ describe('AuthsController', () => {
           });
           expect(response.body.message).toHaveLength(1);
         });
+      });
+    });
+  });
+  describe('As an unauthorized user, I want to log in', () => {
+    describe('drop database', () => {
+      it('should drop database', async () => {
+        await prisma.user.deleteMany({});
+      });
+    });
+    describe('The user successfully log in', () => {
+      it('should prepare data', async () => {
+        // create user
+        const response = await request(httpServer)
+          .post('/api/auth/registration')
+          .send(authStub.registration.validUser);
+        expect(response.status).toBe(204);
+        expect(response.body).toEqual({});
+        // manually confirm user
+        const manuallyConfirmUser = await prisma.emailConfirmation.update({
+          where: { userEmail: 'Aegoraa@yandex.ru' },
+          data: {
+            isConfirmed: true,
+          },
+        });
+        expect(manuallyConfirmUser.isConfirmed).toBeTruthy();
+      });
+      it('should log in 3 times and return 200 with accessToken in body and refreshToken in a cookie', async () => {
+        const token_1 = await request(httpServer)
+          .post('/api/auth/login')
+          .set('User-Agent', 'agent007')
+          .send(authStub.login);
+        expect(token_1.status).toBe(200);
+        expect(isUUID(token_1.body.accessToken));
+        expect(token_1.headers['set-cookie']).toBeDefined();
+        const token_2 = await request(httpServer)
+          .post('/api/auth/login')
+          .set('User-Agent', 'agent007')
+          .send(authStub.login);
+        expect(token_2.status).toBe(200);
+        expect(isUUID(token_2.body.accessToken));
+        expect(token_2.headers['set-cookie']).toBeDefined();
+        const token_3 = await request(httpServer)
+          .post('/api/auth/login')
+          .set('User-Agent', 'agent007')
+          .send(authStub.login);
+        expect(token_3.status).toBe(200);
+        expect(isUUID(token_3.body.accessToken));
+        expect(token_3.headers['set-cookie']).toBeDefined();
+
+        expect.setState({ token_1 });
+      });
+      it('should have deviceSession created', async () => {
+        const token_1 = expect.getState().token_1.headers['set-cookie'][0];
+        const cleanToken = token_1.split('refreshToken=')[1].split(';')[0];
+        const RtPayload: any = await jwtService.decode(cleanToken);
+
+        const session = await prisma.deviceSession.findUnique({
+          where: { deviceId: RtPayload.deviceId },
+        });
+        expect(session).toBeDefined();
+
+        const allSessions = await prisma.deviceSession.findMany({
+          where: { userId: RtPayload.userID },
+        });
+        expect(allSessions).toBeDefined();
+        // expect(allSessions).toBe(Array);
+        expect(allSessions).toHaveLength(3);
       });
     });
   });

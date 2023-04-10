@@ -21,4 +21,8 @@ export const authStub = {
       password: 'thispasswordistoolong',
     },
   },
+  login: {
+    email: 'Aegoraa@yandex.ru',
+    password: 'George123',
+  },
 };
