@@ -8,8 +8,10 @@ import { INestApplication } from '@nestjs/common';
 import { MailBoxImap } from './helpers/imap.service';
 import { isUUID } from 'class-validator';
 import { authStub } from './stubs/auth.stub';
-import { helperFunctionsForTesting } from './helpers/helper-functions';
+import { delay, helperFunctionsForTesting } from './helpers/helper-functions';
 import { JwtService } from '@nestjs/jwt';
+import cookieParser from 'cookie-parser';
+import { response } from 'express';
 
 describe('AuthsController', () => {
   jest.setTimeout(60 * 1000);
@@ -23,6 +25,7 @@ describe('AuthsController', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
+    app.use(cookieParser());
     useGlobalPipes(app);
     useGlobalFilters(app);
     await app.init();
@@ -127,7 +130,7 @@ describe('AuthsController', () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
-              userName: 'George123',
+              username: 'George123',
               email: 'Aegoraaa@yandex.ru',
               password: 'newuser',
             });
@@ -193,7 +196,7 @@ describe('AuthsController', () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
-              userName: true,
+              username: true,
               email: 'email',
               password: 123456,
             });
@@ -209,7 +212,7 @@ describe('AuthsController', () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
-              userName: 'correct',
+              username: 'correct',
               email: 'correct@email.com',
               password: helperFunctionsForTesting.generateString(4),
             });
@@ -225,7 +228,7 @@ describe('AuthsController', () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
-              userName: 'correct',
+              username: 'correct',
               email: 'correct@email.com',
               password: helperFunctionsForTesting.generateString(21),
             });
@@ -237,11 +240,11 @@ describe('AuthsController', () => {
           });
           expect(response.body.message).toHaveLength(1);
         });
-        it('should return 400 status code because the userName was too short', async () => {
+        it('should return 400 status code because the username was too short', async () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
-              userName: helperFunctionsForTesting.generateString(5),
+              username: helperFunctionsForTesting.generateString(5),
               email: 'correct@email.com',
               password: 'correct123',
             });
@@ -253,11 +256,11 @@ describe('AuthsController', () => {
           });
           expect(response.body.message).toHaveLength(1);
         });
-        it('should return 400 status code because the userName was too long', async () => {
+        it('should return 400 status code because the username was too long', async () => {
           const response = await request(httpServer)
             .post('/api/auth/registration')
             .send({
-              userName: helperFunctionsForTesting.generateString(31),
+              username: helperFunctionsForTesting.generateString(31),
               email: 'correct@email.com',
               password: 'correct123',
             });
@@ -397,27 +400,63 @@ describe('AuthsController', () => {
         // expect(allSessions).toBe(Array);
         expect(allSessions).toHaveLength(3);
       });
-    });
-    describe('Alternative log in scenarios', () => {
-      describe('The user tries to refresh tokens /api/auth/refresh-token', () => {
-        const token_1 = expect.getState().token_1.headers['set-cookie'][0];
-        const RtPayload_1 = expect.getState().RtPayload_1;
+      it('should be able to refresh-tokens', async () => {
+        const token_1 = expect.getState().token_1.headers['set-cookie'];
 
-        it('successfully refreshes tokens', async () => {
-          const response = await request(httpServer)
-            .post('/api/refresh-token')
-            .set('Cookie', token_1);
-          expect(response.status).toBe(200);
-          expect(isUUID(response.body.accessToken));
-          expect(response.headers['set-cookie']).toBeDefined();
-        });
-        it('should not find device session if old refreshToken is used', async () => {
-          const session = await prisma.deviceSession.findUnique({
-            where: { deviceId: RtPayload_1.deviceId },
-          });
-          expect(session).toBeNull();
-        });
+        await delay(1000);
+
+        const token_2 = await request(httpServer)
+          .post('/api/auth/refresh-token')
+          .set('Cookie', token_1);
+
+        expect.setState({ token_2 });
+        expect(token_2.status).toBe(200);
+        expect(isUUID(token_2.body.accessToken));
+        expect(token_2.headers['set-cookie']).toBeDefined();
+      });
+      it('should not find devices if old refreshToken is used', async () => {
+        const token_1 = expect.getState().token_1.headers['set-cookie'];
+        const token_2 = expect.getState().token_2.headers['set-cookie'];
+
+        const response = await request(httpServer)
+          .get('/api/sessions/devices')
+          .set('Cookie', token_1);
+        expect(response.status).toBe(401);
+      });
+      it('should find devices if new refreshToken is used', async () => {
+        const token_2 = expect.getState().token_2.headers['set-cookie'];
+        const response = await request(httpServer)
+          .get('/api/sessions/devices')
+          .set('Cookie', token_2);
+        expect(response.status).toBe(200);
       });
     });
   });
 });
+
+// describe('Alternative log in scenarios', () => {
+//   describe('It should prepare the data', () => {
+//     it('should register the user');
+//     describe('The user tries to refresh tokens /api/auth/refresh-token', () => {
+//       const test = expect.getState().token_1;
+//       console.log(test);
+//       const token_1 = expect.getState().token_1.headers['set-cookie'][0];
+//       const RtPayload_1 = expect.getState().RtPayload_1;
+//
+//       it('successfully refreshes tokens', async () => {
+//         const response = await request(httpServer)
+//             .post('/api/refresh-token')
+//             .set('Cookie', token_1);
+//         expect(response.status).toBe(200);
+//         expect(isUUID(response.body.accessToken));
+//         expect(response.headers['set-cookie']).toBeDefined();
+//       });
+//       it('should not find device session if old refreshToken is used', async () => {
+//         const session = await prisma.deviceSession.findUnique({
+//           where: { deviceId: RtPayload_1.deviceId },
+//         });
+//         expect(session).toBeNull();
+//       });
+//     });
+//   });
+// });

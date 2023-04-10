@@ -4,7 +4,7 @@ import { LoginDto } from '../../../src/auth/dto/login.dto';
 export const authStub = {
   registration: {
     validUser: {
-      userName: 'George',
+      username: 'George',
       email: 'Aegoraa@yandex.ru',
       password: 'George123',
     },
