@@ -399,7 +399,7 @@ describe('AuthsController', () => {
         // expect(allSessions).toBe(Array);
         expect(allSessions).toHaveLength(3);
       });
-      it('should be able to refresh-tokens', async () => {
+      it('/api/auth/refresh-token (POST) should be able to refresh-tokens', async () => {
         const token_1 = expect.getState().token_1.headers['set-cookie'];
 
         await delay(1000);
@@ -413,7 +413,7 @@ describe('AuthsController', () => {
         expect(isUUID(token_2.body.accessToken));
         expect(token_2.headers['set-cookie']).toBeDefined();
       });
-      it('should not find devices if old refreshToken is used', async () => {
+      it('/api/sessions/devices (GET) should not find devices if old refreshToken is used', async () => {
         const token_1 = expect.getState().token_1.headers['set-cookie'];
 
         const response = await request(httpServer)
@@ -421,12 +421,96 @@ describe('AuthsController', () => {
           .set('Cookie', token_1);
         expect(response.status).toBe(401);
       });
-      it('should find devices if new refreshToken is used', async () => {
+      it('/api/sessions/devices (GET) should find devices if new refreshToken is used', async () => {
         const token_2 = expect.getState().token_2.headers['set-cookie'];
         const response = await request(httpServer)
           .get('/api/sessions/devices')
           .set('Cookie', token_2);
         expect(response.status).toBe(200);
+      });
+    });
+    describe('Alternative scenario', () => {
+      describe('User provides incorrect data types during log in', () => {
+        it('/api/auth/login (POST) should not log in if user email is of wrong type', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/login')
+            .set('User-Agent', 'agent007')
+            .send(authStub.login.invalidUserEmail);
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/login',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('/api/auth/login (POST) should not log in if user password is of wrong type', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/login')
+            .set('User-Agent', 'agent007')
+            .send(authStub.login.invalidUserPassword);
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/login',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('/api/auth/login (POST) should not log in if both user password and email are of wrong type', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/login')
+            .set('User-Agent', 'agent007')
+            .send(authStub.login.invalidUser);
+          expect(response.status).toBe(400);
+          expect(response.body).toEqual({
+            statusCode: 400,
+            message: expect.any(Array),
+            path: '/api/auth/login',
+          });
+          expect(response.body.message).toHaveLength(2);
+        });
+      });
+      describe('User provides incorrect credentials', () => {
+        it('/api/auth/login (POST) should not log in if user email is incorrect', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/login')
+            .set('User-Agent', 'agent007')
+            .send(authStub.login.incorrectUserEmail);
+          expect(response.status).toBe(401);
+          expect(response.body).toEqual({
+            statusCode: 401,
+            message: expect.any(Array),
+            path: '/api/auth/login',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('/api/auth/login (POST) should not log in if user password is incorrect', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/login')
+            .set('User-Agent', 'agent007')
+            .send(authStub.login.incorrectUserPassword);
+          expect(response.status).toBe(401);
+          expect(response.body).toEqual({
+            statusCode: 401,
+            message: expect.any(Array),
+            path: '/api/auth/login',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
+        it('/api/auth/login (POST) should not log in if user email and password are incorrect', async () => {
+          const response = await request(httpServer)
+            .post('/api/auth/login')
+            .set('User-Agent', 'agent007')
+            .send(authStub.login.incorrectUser);
+          expect(response.status).toBe(401);
+          expect(response.body).toEqual({
+            statusCode: 401,
+            message: expect.any(Array),
+            path: '/api/auth/login',
+          });
+          expect(response.body.message).toHaveLength(1);
+        });
       });
     });
   });

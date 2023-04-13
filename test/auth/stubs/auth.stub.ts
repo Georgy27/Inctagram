@@ -1,6 +1,3 @@
-import { AuthDto } from '../../../src/auth/dto/auth.dto';
-import { LoginDto } from '../../../src/auth/dto/login.dto';
-
 export const authStub = {
   registration: {
     validUser: {
@@ -24,5 +21,29 @@ export const authStub = {
   login: {
     email: 'Aegoraa@yandex.ru',
     password: 'George123',
+    invalidUserEmail: {
+      email: true,
+      password: 'George123',
+    },
+    invalidUserPassword: {
+      email: 'Aegoraa@yandex.ru',
+      password: 123456,
+    },
+    invalidUser: {
+      email: true,
+      password: 123456,
+    },
+    incorrectUserEmail: {
+      email: 'Incorrect@yandex.ru',
+      password: 'George123',
+    },
+    incorrectUserPassword: {
+      email: 'Aegoraa@yandex.ru',
+      password: '123456',
+    },
+    incorrectUser: {
+      email: 'Incorrect@yandex.ru',
+      password: '123456',
+    },
   },
 };
