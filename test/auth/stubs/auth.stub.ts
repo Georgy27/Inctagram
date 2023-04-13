@@ -4,6 +4,7 @@ import { LoginDto } from '../../../src/auth/dto/login.dto';
 export const authStub = {
   registration: {
     validUser: {
+      username: 'George',
       email: 'Aegoraa@yandex.ru',
       password: 'George123',
     },
@@ -19,5 +20,9 @@ export const authStub = {
       email: 'valid@mail.com',
       password: 'thispasswordistoolong',
     },
+  },
+  login: {
+    email: 'Aegoraa@yandex.ru',
+    password: 'George123',
   },
 };

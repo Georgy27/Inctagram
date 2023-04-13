@@ -2,9 +2,12 @@ import {
   Body,
   Controller,
   HttpCode,
+  Ip,
   Post,
   Res,
   UseGuards,
+  Headers,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthDto } from '../dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -20,7 +23,7 @@ import {
   AuthRegistrationConfirmationSwaggerDecorator,
   AuthRegistrationEmailResendingSwaggerDecorator,
   AuthRegistrationSwaggerDecorator,
-} from '../../common/decorators/swagger/auth.decorators';
+} from '../../common/decorators/swagger/auth.decorator';
 import { CommandBus } from '@nestjs/cqrs';
 import { RegisterUserCommand } from '../use-cases/register-user-use-case';
 import { RegistrationEmailResendingCommand } from '../use-cases/registration-email-resending-use-case';
@@ -37,6 +40,7 @@ import { GetRtFromCookieDecorator } from '../../common/decorators/jwt/getRtFromC
 import { JwtAdaptor } from '../../adaptors/jwt/jwt.adaptor';
 import { PasswordRecoveryCommand } from '../use-cases/password-recovery.use-case';
 import { NewPasswordCommand } from '../use-cases/new-password.use-case';
+
 @ApiTags('Auth')
 @Controller('/api/auth')
 export class AuthController {
@@ -76,12 +80,17 @@ export class AuthController {
   @HttpCode(200)
   async login(
     @Body() loginDto: LoginDto,
+    @Ip()
+    ip: string,
     @Res({ passthrough: true }) res: Response,
+    @Headers('user-agent') userAgent: string,
   ): Promise<LogginSuccessViewModel> {
+    // if (!userAgent) throw new UnauthorizedException();
+
     const { accessToken, refreshToken } = await this.commandBus.execute<
       LoginUserCommand,
       { accessToken: string; refreshToken: string }
-    >(new LoginUserCommand(loginDto));
+    >(new LoginUserCommand(loginDto, ip, userAgent));
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
@@ -99,7 +108,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.commandBus.execute(
-      new LogoutUserCommand(rtPayload.userId, refreshToken),
+      new LogoutUserCommand(rtPayload.deviceId, refreshToken),
     );
   }
 

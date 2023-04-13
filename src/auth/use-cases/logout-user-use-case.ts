@@ -1,26 +1,27 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UserRepository } from '../../user/repositories/user.repository';
-
 import { JwtAdaptor } from '../../adaptors/jwt/jwt.adaptor';
+import { DeviceSessionsRepository } from '../../deviceSessions/repositories/device-sessions.repository';
 
 export class LogoutUserCommand {
   constructor(
-    public userId: string,
+    public deviceId: string,
     public refreshToken: { refreshToken: string },
   ) {}
 }
 @CommandHandler(LogoutUserCommand)
 export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly deviceSessionsRepository: DeviceSessionsRepository,
     private readonly jwtAdaptor: JwtAdaptor,
   ) {}
   async execute(command: LogoutUserCommand) {
     await this.jwtAdaptor.validateTokens(
       command.refreshToken.refreshToken,
-      command.userId,
+      command.deviceId,
     );
 
-    return this.userRepository.logout(command.userId);
+    return this.deviceSessionsRepository.deleteSessionByDeviceId(
+      command.deviceId,
+    );
   }
 }

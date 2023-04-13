@@ -12,22 +12,34 @@ datasource db {
 
 model User {
   id                String             @id @default(uuid())
+  username          String             @unique
   email             String             @unique
   hash              String
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   passwordRecovery  PasswordRecovery?
   emailConfirmation EmailConfirmation?
-  token             Token?
+  deviceSession     DeviceSession[]
 }
 
 model Token {
-  accessTokenHash  String?
-  refreshTokenHash String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String   @unique
+  accessTokenHash  String
+  refreshTokenHash String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deviceSession    DeviceSession? @relation(fields: [deviceSessionId], references: [deviceId], onDelete: Cascade)
+  deviceSessionId  String         @unique
+}
+
+model DeviceSession {
+  ip             String
+  deviceName     String
+  createdAt      DateTime @default(now())
+  lastActiveDate DateTime @updatedAt
+  deviceId       String   @unique
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?
+  token          Token?
 }
 
 model PasswordRecovery {

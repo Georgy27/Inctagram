@@ -2,6 +2,7 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiCookieAuth,
+  ApiHideProperty,
   ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
@@ -14,6 +15,7 @@ import { ConfirmationCodeDto } from '../../../auth/dto/confirmation-code.dto';
 import { EmailDto } from '../../../auth/dto/email.dto';
 import { NewPasswordDto } from '../../../auth/dto/new-password.dto';
 import { AuthDto } from '../../../auth/dto/auth.dto';
+import { LoginDto } from '../../../auth/dto/login.dto';
 
 export function AuthRegistrationSwaggerDecorator() {
   return applyDecorators(
@@ -40,7 +42,7 @@ export function AuthLoginSwaggerDecorator() {
     ApiOperation({
       summary: 'Try login user to the system',
     }),
-    ApiBody({ type: AuthDto }),
+    ApiBody({ type: LoginDto }),
     ApiResponse({
       status: 200,
       description:

@@ -10,8 +10,9 @@ export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
   async createUser(createUserDto: CreateUserDto, hash: string) {
-    return this.prisma.user.upsert({
-      create: {
+    return this.prisma.user.create({
+      data: {
+        username: createUserDto.username,
         email: createUserDto.email,
         hash: hash,
         emailConfirmation: {
@@ -25,20 +26,6 @@ export class UserRepository {
         },
         passwordRecovery: { create: {} },
       },
-      update: {
-        email: createUserDto.email,
-        hash: hash,
-        emailConfirmation: {
-          update: {
-            confirmationCode: randomUUID(),
-            expirationDate: add(new Date(), {
-              minutes: 1,
-            }).toISOString(),
-            isConfirmed: false,
-          },
-        },
-      },
-      where: { email: createUserDto.email },
       select: {
         id: true,
         email: true,
@@ -61,8 +48,15 @@ export class UserRepository {
       },
     });
   }
-  async findTokenByUserId(userId: string): Promise<Token | null> {
-    return this.prisma.token.findUnique({ where: { userId } });
+  async findUserByUserName(username: string) {
+    return this.prisma.user.findUnique({
+      where: { username },
+      include: {
+        emailConfirmation: {
+          select: { isConfirmed: true },
+        },
+      },
+    });
   }
   async findUserByEmailConfirmationCode(
     code: string,
@@ -139,25 +133,6 @@ export class UserRepository {
     });
   }
 
-  async updateUserTokens(
-    userId: string,
-    tokens: { accessTokenHash: string; refreshTokenHash: string },
-  ) {
-    return this.prisma.token.upsert({
-      create: {
-        accessTokenHash: tokens.accessTokenHash,
-        refreshTokenHash: tokens.refreshTokenHash,
-        userId,
-      },
-      update: {
-        accessTokenHash: tokens.accessTokenHash,
-        refreshTokenHash: tokens.refreshTokenHash,
-      },
-      where: {
-        userId,
-      },
-    });
-  }
   async updatePasswordRecoveryCode(userId: string, recoveryCode: string) {
     return this.prisma.passwordRecovery.update({
       where: { userId },
@@ -184,22 +159,7 @@ export class UserRepository {
       },
     });
   }
-  async logout(userId: string): Promise<boolean> {
-    await this.prisma.token.updateMany({
-      where: {
-        userId,
-        refreshTokenHash: {
-          not: null,
-        },
-        accessTokenHash: {
-          not: null,
-        },
-      },
-      data: {
-        refreshTokenHash: null,
-        accessTokenHash: null,
-      },
-    });
-    return true;
+  async clearUsers() {
+    return this.prisma.user.deleteMany({});
   }
 }

@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AdaptorModule } from './adaptors/adaptor.module';
+import { DeviceSessionsModule } from './deviceSessions/device-sessions.module';
+import { TestingModule } from './testing-remove-all-data/testing.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { AdaptorModule } from './adaptors/adaptor.module';
     UserModule,
     PrismaModule,
     AdaptorModule,
+    DeviceSessionsModule,
+    TestingModule,
   ],
   controllers: [AppController],
 })
