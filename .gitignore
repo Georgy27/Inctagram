@@ -4,6 +4,7 @@
 
 .yarn
 .env
+.env.test
 # Logs
 logs
 *.log

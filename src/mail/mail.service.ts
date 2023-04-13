@@ -21,7 +21,7 @@ export class MailService {
   }
 
   async sendPasswordRecovery(user: User, token: string) {
-    const url = `example.com/auth/password-recovery?code=${token}`;
+    const url = `example.com/auth/confirm?code=${token}`;
 
     await this.mailerService.sendMail({
       to: user.email,

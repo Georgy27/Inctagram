@@ -6,10 +6,10 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('INCTAGRAM')
     .setDescription('API documentation for INCTAGRAM App')
     .setVersion('1.0')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'JWT-auth',
-    )
+    .addBearerAuth({
+      type: 'http',
+      bearerFormat: 'jwt',
+    })
     .addCookieAuth('refresh-token')
     .build();
 

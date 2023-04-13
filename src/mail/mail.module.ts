@@ -4,8 +4,7 @@ import { Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailerMock from 'nodemailer-mock';
-import * as nodemailer from 'nodemailer';
+
 @Module({
   imports: [
     MailerModule.forRootAsync({

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { LoginDto } from '../../auth/dto/login.dto';
-import { DeviceSession, Token } from '@prisma/client';
+import { DeviceSession } from '@prisma/client';
 import { DeviceViewModel } from '../types';
 
 @Injectable()
@@ -33,9 +32,7 @@ export class DeviceSessionsRepository {
       console.log(error);
     }
   }
-  async findTokensByDeviceSessionId(
-    deviceSessionId: string,
-  ): Promise<Token | null> {
+  async findTokensByDeviceSessionId(deviceSessionId: string) {
     return this.prisma.token.findUnique({ where: { deviceSessionId } });
   }
   async updateTokensByDeviceSessionId(
@@ -64,7 +61,7 @@ export class DeviceSessionsRepository {
   async findAllActiveSessions(
     userId: string,
     deviceId: string,
-  ): Promise<DeviceViewModel[]> {
+  ): Promise<DeviceViewModel[] | null> {
     const allActiveSessions = await this.prisma.deviceSession.findMany({
       where: { userId },
       select: {
@@ -91,7 +88,6 @@ export class DeviceSessionsRepository {
       console.log(error);
     }
   }
-
   async findSessionByDeviceId(deviceId: string): Promise<DeviceSession | null> {
     return this.prisma.deviceSession.findUnique({ where: { deviceId } });
   }

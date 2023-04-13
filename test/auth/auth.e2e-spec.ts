@@ -157,7 +157,7 @@ describe('AuthsController', () => {
             });
           expect(response.status).toBe(204);
         });
-        it('should send 404 if the User does exist but has been confirmed', async () => {
+        it('should send 400 if the User does exist but has been confirmed', async () => {
           await prisma.emailConfirmation.update({
             where: { userEmail: 'Aegoraaa@yandex.ru' },
             data: {
@@ -169,9 +169,9 @@ describe('AuthsController', () => {
             .send({
               email: 'Aegoraaa@yandex.ru',
             });
-          expect(response.status).toBe(404);
+          expect(response.status).toBe(400);
           expect(response.body).toEqual({
-            statusCode: 404,
+            statusCode: 400,
             message: expect.any(Array),
             path: '/api/auth/registration-email-resending',
           });

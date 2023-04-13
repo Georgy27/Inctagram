@@ -11,6 +11,6 @@ export class TestingController {
   @HttpCode(204)
   @TestingRemoveAllDataDecorator()
   async deleteAllData() {
-    return this.userRepository.clearUsers();
+    return this.userRepository.deleteAll();
   }
 }

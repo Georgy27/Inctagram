@@ -6,13 +6,14 @@ import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AdaptorModule } from './adaptors/adaptor.module';
 import { DeviceSessionsModule } from './deviceSessions/device-sessions.module';
+import { configValidationSchema } from './config/validation-schema';
 import { TestingModule } from './testing-remove-all-data/testing.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
       isGlobal: true,
+      validationSchema: configValidationSchema,
     }),
     AuthModule,
     UserModule,
