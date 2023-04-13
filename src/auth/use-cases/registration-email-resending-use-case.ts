@@ -1,6 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EmailDto } from '../dto/email.dto';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { MailService } from '../../mail/mail.service';
 import { UserRepository } from '../../user/repositories/user.repository';
 
@@ -21,11 +25,10 @@ export class RegistrationEmailResendingUseCase
     const user = await this.userRepository.findUserByEmail(
       command.emailDto.email,
     );
-    if (!user)
-      throw new NotFoundException('No user exists with the given email');
+    if (!user) throw new NotFoundException();
     // check if user is already confirmed
     if (user.emailConfirmation?.isConfirmed)
-      throw new NotFoundException('User already confirmed');
+      throw new BadRequestException('user has already been confirmed');
     // update email confirmation info
     const emailConfirmationInfo =
       await this.userRepository.updateEmailConfirmationInfo(user.email);

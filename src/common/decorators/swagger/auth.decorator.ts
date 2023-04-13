@@ -2,7 +2,6 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiCookieAuth,
-  ApiHideProperty,
   ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
@@ -14,8 +13,8 @@ import { applyDecorators } from '@nestjs/common';
 import { ConfirmationCodeDto } from '../../../auth/dto/confirmation-code.dto';
 import { EmailDto } from '../../../auth/dto/email.dto';
 import { NewPasswordDto } from '../../../auth/dto/new-password.dto';
-import { AuthDto } from '../../../auth/dto/auth.dto';
 import { LoginDto } from '../../../auth/dto/login.dto';
+import { AuthDto } from '../../../auth/dto/auth.dto';
 
 export function AuthRegistrationSwaggerDecorator() {
   return applyDecorators(
@@ -111,8 +110,7 @@ export function AuthRegistrationEmailResendingSwaggerDecorator() {
       type: FieldError,
     }),
     ApiNotFoundResponse({
-      description:
-        'User with the given email does not exist or email has already been verified',
+      description: 'User with the given email does not exist',
     }),
   );
 }

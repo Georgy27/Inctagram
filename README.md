@@ -1,3 +1,5 @@
+![Deploy](https://github.com/INCTAGRAM/inctagram-back/actions/workflows/deploy.yml/badge.svg)
+
 ## Installation
 
 ```bash

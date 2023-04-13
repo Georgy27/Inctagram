@@ -1,7 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import bcrypt from 'bcrypt';
-
-import { MailService } from 'src/mail/mail.service';
 import { BadRequestException } from '@nestjs/common';
 import { UserRepository } from '../../user/repositories/user.repository';
 
@@ -25,7 +23,7 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand> {
           recoveryCode,
         );
 
-      if (!user) return;
+      if (!user) throw new BadRequestException('Bad recovery code');
 
       const exp = user?.passwordRecovery?.expirationDate;
 

@@ -16,13 +16,13 @@ export class LoginUserCommand {
 @CommandHandler(LoginUserCommand)
 export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
   constructor(
+    private readonly deviceSessionsRepository: DeviceSessionsRepository,
     private readonly userRepository: UserRepository,
 
     private readonly jwtAdaptor: JwtAdaptor,
-    private readonly deviceSessionsRepository: DeviceSessionsRepository,
   ) {}
   async execute(command: LoginUserCommand) {
-    // find user
+    // find user and check if its banned
     const user = await this.userRepository.findUserByEmail(
       command.loginDto.email,
     );
@@ -32,14 +32,13 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
       );
     if (!user?.emailConfirmation?.isConfirmed)
       throw new UnauthorizedException(
-        'Need to confirm an email in order to enter in the system',
+        'Please, confirm an email in order to enter in the system',
       );
     const checkPassword = await bcrypt.compare(
       command.loginDto.password,
       user.hash,
     );
-    if (!checkPassword)
-      throw new UnauthorizedException('passwords do not match');
+    if (!checkPassword) throw new UnauthorizedException();
     // tokens
     const deviceId = randomUUID();
     const tokens = await this.jwtAdaptor.getTokens(

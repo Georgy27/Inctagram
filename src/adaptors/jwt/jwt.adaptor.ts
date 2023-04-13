@@ -2,9 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon from 'argon2';
-import { RtPayload } from '../../auth/strategies/types';
 import { UserRepository } from '../../user/repositories/user.repository';
 import { DeviceSessionsRepository } from '../../deviceSessions/repositories/device-sessions.repository';
+import { ActiveUserData } from '../../user/types';
 @Injectable()
 export class JwtAdaptor {
   constructor(
@@ -17,14 +17,14 @@ export class JwtAdaptor {
   async getTokens(userId: string, userName: string, deviceId: string) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        { userId, userName, deviceId },
+        { userId, deviceId },
         {
           secret: this.config.get<string>('AT_SECRET'),
           expiresIn: '1h',
         },
       ),
       this.jwtService.signAsync(
-        { userId, userName, deviceId },
+        { userId, deviceId },
         {
           secret: this.config.get<string>('RT_SECRET'),
           expiresIn: '2h',
@@ -49,31 +49,43 @@ export class JwtAdaptor {
       refreshTokenHash,
     };
   }
-  async refreshToken(rtPayload: RtPayload, rt: { refreshToken: string }) {
-    // // check if the token is valid
-    await this.validateTokens(rt.refreshToken, rtPayload.deviceId);
+  async refreshToken(user: ActiveUserData) {
     //  create new pair of tokens
     const tokens = await this.getTokens(
-      rtPayload.userId,
-      rtPayload.userName,
-      rtPayload.deviceId,
+      user.userId,
+      user.username,
+      user.deviceId,
     );
     const hashedTokens = await this.updateTokensHash(tokens);
     await this.deviceSessionsRepository.updateTokensByDeviceSessionId(
-      rtPayload.deviceId,
+      user.deviceId,
       hashedTokens,
     );
     return tokens;
   }
-  async validateTokens(refreshToken: string, deviceId: string) {
+  async validateRtToken(refreshToken: string, deviceId: string) {
     const isJwt =
       await this.deviceSessionsRepository.findTokensByDeviceSessionId(deviceId);
+
     if (!isJwt)
       throw new UnauthorizedException(
         'token has expired or is no longer valid',
       );
 
     const rtMatches = await argon.verify(isJwt.refreshTokenHash, refreshToken);
+    if (!rtMatches) throw new UnauthorizedException('Access denied');
+    return true;
+  }
+  async validateAtToken(accessToken: string, deviceId: string) {
+    const isJwt =
+      await this.deviceSessionsRepository.findTokensByDeviceSessionId(deviceId);
+
+    if (!isJwt)
+      throw new UnauthorizedException(
+        'token has expired or is no longer valid',
+      );
+
+    const rtMatches = await argon.verify(isJwt.accessTokenHash, accessToken);
     if (!rtMatches) throw new UnauthorizedException('Access denied');
     return true;
   }

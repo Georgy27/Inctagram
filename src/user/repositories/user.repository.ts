@@ -1,15 +1,17 @@
+import { EmailConfirmation } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { EmailConfirmation, Token, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { add } from 'date-fns';
+
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUserDto } from '../dto/create.user.dto';
 import { UserWithEmailConfirmation } from '../types';
+
 @Injectable()
 export class UserRepository {
-  constructor(private prisma: PrismaService) {}
+  public constructor(private prisma: PrismaService) {}
 
-  async createUser(createUserDto: CreateUserDto, hash: string) {
+  public async createUser(createUserDto: CreateUserDto, hash: string) {
     return this.prisma.user.create({
       data: {
         username: createUserDto.username,
@@ -38,7 +40,8 @@ export class UserRepository {
       },
     });
   }
-  async findUserByEmail(email: string) {
+
+  public async findUserByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email: email },
       include: {
@@ -48,7 +51,7 @@ export class UserRepository {
       },
     });
   }
-  async findUserByUserName(username: string) {
+  public async findUserByUserName(username: string) {
     return this.prisma.user.findUnique({
       where: { username },
       include: {
@@ -58,7 +61,8 @@ export class UserRepository {
       },
     });
   }
-  async findUserByEmailConfirmationCode(
+
+  public async findUserByEmailConfirmationCode(
     code: string,
   ): Promise<UserWithEmailConfirmation | null> {
     return this.prisma.user.findFirst({
@@ -78,7 +82,8 @@ export class UserRepository {
       },
     });
   }
-  async findUserByConfirmationOrRecoveryCode(code: string) {
+
+  public async findUserByConfirmationOrRecoveryCode(code: string) {
     return this.prisma.user.findFirst({
       where: {
         OR: [
@@ -111,7 +116,8 @@ export class UserRepository {
       },
     });
   }
-  async updateEmailConfirmationCode(
+
+  public async updateEmailConfirmationCode(
     userEmail: string,
   ): Promise<EmailConfirmation> {
     return this.prisma.emailConfirmation.update({
@@ -119,7 +125,8 @@ export class UserRepository {
       data: { isConfirmed: true },
     });
   }
-  async updateEmailConfirmationInfo(
+
+  public async updateEmailConfirmationInfo(
     userEmail: string,
   ): Promise<EmailConfirmation> {
     return this.prisma.emailConfirmation.update({
@@ -127,13 +134,16 @@ export class UserRepository {
       data: {
         confirmationCode: randomUUID(),
         expirationDate: add(new Date(), {
-          minutes: 1,
+          minutes: 10,
         }).toISOString(),
       },
     });
   }
 
-  async updatePasswordRecoveryCode(userId: string, recoveryCode: string) {
+  public async updatePasswordRecoveryCode(
+    userId: string,
+    recoveryCode: string,
+  ) {
     return this.prisma.passwordRecovery.update({
       where: { userId },
       data: {
@@ -145,7 +155,7 @@ export class UserRepository {
     });
   }
 
-  async updatePassword(id: string, hash: string) {
+  public async updatePassword(id: string, hash: string) {
     return this.prisma.user.update({
       where: { id },
       data: {
@@ -159,7 +169,27 @@ export class UserRepository {
       },
     });
   }
-  async clearUsers() {
+
+  public async findUserById(
+    id: string,
+  ): Promise<UserWithEmailConfirmation | null> {
+    try {
+      return this.prisma.user.findFirst({
+        where: {
+          id,
+        },
+        include: {
+          emailConfirmation: true,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+
+      return null;
+    }
+  }
+
+  public async deleteAll() {
     return this.prisma.user.deleteMany({});
   }
 }

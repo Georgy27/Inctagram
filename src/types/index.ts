@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 export class FieldError {
   @ApiProperty()
   statusCode: string;

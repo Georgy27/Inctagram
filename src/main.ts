@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { useGlobalPipes } from './common/pipes/global.pipe';
 import { useGlobalFilters } from './common/filters/global.filter';
 import cookieParser from 'cookie-parser';
+import { PrismaService } from './prisma/prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,10 @@ async function bootstrap() {
   setupSwagger(app);
   useGlobalPipes(app);
   useGlobalFilters(app);
-  await app.listen(4000);
+
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app);
+
+  await app.listen(process.env.PORT || 4000);
 }
 bootstrap();

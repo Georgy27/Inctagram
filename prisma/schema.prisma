@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -20,6 +21,21 @@ model User {
   passwordRecovery  PasswordRecovery?
   emailConfirmation EmailConfirmation?
   deviceSession     DeviceSession[]
+  avatar            Avatar?
+  profile           Profile?
+}
+
+model Profile {
+  id        String    @id @default(uuid())
+  name      String
+  surname   String
+  birthday  DateTime?
+  city      String
+  aboutMe   String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Token {
@@ -59,4 +75,17 @@ model EmailConfirmation {
   updatedAt        DateTime @updatedAt
   user             User     @relation(fields: [userEmail], references: [email], onDelete: Cascade)
   userEmail        String   @unique
+}
+
+model Avatar {
+  id         String   @id @default(uuid())
+  url        String?
+  previewUrl String?
+  size       Int?
+  height     Int?
+  width      Int?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

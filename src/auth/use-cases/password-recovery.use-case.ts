@@ -1,9 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-
-import { MailService } from '../../mail/mail.service';
 import { UserRepository } from '../../user/repositories/user.repository';
+import { MailService } from '../../mail/mail.service';
 
 export class PasswordRecoveryCommand {
   public constructor(public readonly email: string) {}
