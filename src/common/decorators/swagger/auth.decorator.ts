@@ -110,8 +110,7 @@ export function AuthRegistrationEmailResendingSwaggerDecorator() {
       type: FieldError,
     }),
     ApiNotFoundResponse({
-      description:
-        'User with the given email does not exist or email has already been verified',
+      description: 'User with the given email does not exist',
     }),
   );
 }
