@@ -19,11 +19,21 @@ import { ProfileRepository } from './repositories/profile.repository';
 import { UpdateProfileUseCase } from './use-cases/update-profile.use-case';
 import { ProfileRepositoryAdapter } from './repositories/adapters/profile-repository.adapter';
 import { ProfileQueryRepositoryAdapter } from './repositories/adapters/profile-query-repository.adapter';
+import { CreatePostUseCase } from './use-cases/post/create-post.use-case';
+import { DeletePostUseCase } from './use-cases/post/delete-post.use-case';
+import { PostsRepositoryAdapter } from './repositories/adapters/post/posts.adapter';
+import { PostsRepository } from './repositories/post/posts.repository';
+import { UpdatePostUseCase } from './use-cases/post/update-post.use-case';
+import { PostsQueryRepositoryAdatapter } from './repositories/adapters/post/posts.query-adapter';
+import { PostsQueryRepository } from './repositories/post/posts.query-repository';
 
 const useCases = [
   UploadAvatarUseCase,
   CreateProfileUseCase,
   UpdateProfileUseCase,
+  CreatePostUseCase,
+  DeletePostUseCase,
+  UpdatePostUseCase,
 ];
 
 @Module({
@@ -56,6 +66,14 @@ const useCases = [
     {
       provide: ProfileQueryRepositoryAdapter,
       useClass: ProfileQueryRepository,
+    },
+    {
+      provide: PostsRepositoryAdapter,
+      useClass: PostsRepository,
+    },
+    {
+      provide: PostsQueryRepositoryAdatapter,
+      useClass: PostsQueryRepository,
     },
   ],
   exports: [UserRepository],

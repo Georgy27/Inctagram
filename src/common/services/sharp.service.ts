@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import sharp, { Metadata } from 'sharp';
+import sharp from 'sharp';
+import { ImageMetadataType } from '../types';
 
 import { Dimensions, ImageService } from './image.service';
 
 @Injectable()
 export class SharpService extends ImageService {
-  public async getMetadata(buffer: Buffer): Promise<Partial<Metadata>> {
-    return sharp(buffer).metadata();
+  public async getMetadata(buffer: Buffer): Promise<ImageMetadataType> {
+    const metadata = await sharp(buffer).metadata();
+
+    return { height: null, width: null, size: null, ...metadata };
   }
 
   public async resize(
@@ -19,7 +22,7 @@ export class SharpService extends ImageService {
       .resize({
         width,
         height,
-        fit: 'inside',
+        fit: 'cover',
       })
       .toBuffer();
 

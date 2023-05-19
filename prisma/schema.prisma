@@ -15,7 +15,7 @@ model User {
   id                String             @id @default(uuid())
   username          String             @unique
   email             String             @unique
-  hash              String
+  hash              String?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
   passwordRecovery  PasswordRecovery?
@@ -23,14 +23,34 @@ model User {
   deviceSession     DeviceSession[]
   avatar            Avatar?
   profile           Profile?
+  post              Post[]
+  oauthAccount      OauthAccount[]
+}
+
+enum OauthProvider {
+  GITHUB
+  GOOGLE
+}
+
+model OauthAccount {
+  id               String        @id @default(uuid())
+  clientId         String
+  type             OauthProvider
+  linked           Boolean       @default(false)
+  mergeCode        String?
+  mergeCodeExpDate DateTime?
+  user             User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+
+  @@unique([clientId, type])
 }
 
 model Profile {
   id        String    @id @default(uuid())
-  name      String
-  surname   String
+  name      String?
+  surname   String?
   birthday  DateTime?
-  city      String
+  city      String?
   aboutMe   String?
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String    @unique
@@ -88,4 +108,36 @@ model Avatar {
   userId     String   @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  userId      String
+  description String?  @db.VarChar(500)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images      Image[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Image {
+  id         String         @id @default(uuid())
+  url        String
+  previewUrl String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  postId     String
+  post       Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  metadata   ImageMetadata?
+}
+
+model ImageMetadata {
+  id        String   @id @default(uuid())
+  size      Int
+  height    Int
+  width     Int
+  imageId   String   @unique
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

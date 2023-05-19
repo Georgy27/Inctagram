@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, GoneException } from '@nestjs/common';
 import { UserRepository } from '../../user/repositories/user.repository';
 import { ConfirmationCodeDto } from '../dto/confirmation-code.dto';
 import { UserWithEmailConfirmation } from '../../user/types';
@@ -43,7 +43,7 @@ export class ConfirmRegistrationUseCase
       throw new BadRequestException('User code does not match');
     }
     if (user.emailConfirmation.expirationDate < new Date().toISOString()) {
-      throw new BadRequestException('User code has expired');
+      throw new GoneException('User code has expired');
     }
     return true;
   }

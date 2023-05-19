@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { QueryRepositoryAdapter } from 'src/common/adapters/repository.adapter';
+import { RepositoryAdapter } from 'src/common/adapters/repository.adapter';
 
 @Injectable()
-export abstract class ImagesRepositoryAdapter<
-  T,
-> extends QueryRepositoryAdapter {
+export abstract class ImagesRepositoryAdapter<T> extends RepositoryAdapter {
   public abstract create(id: string, payload: Partial<T>): Promise<T | null>;
 }

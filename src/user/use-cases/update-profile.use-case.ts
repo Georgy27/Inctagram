@@ -32,12 +32,13 @@ export class UpdateProfileUseCase
     const user = await this.userRepository.findUserById(userId);
     if (!user) throw new NotFoundException();
     // check that username does not exist
-    const checkUserName = await this.userRepository.findUserByUserName(
-      command.updateUserProfileDto.username,
-    );
-    if (checkUserName && checkUserName.username !== user.username)
-      throw new BadRequestException('This username is already used');
-
+    if (command.updateUserProfileDto.username) {
+      const checkUserName = await this.userRepository.findUserByUserName(
+        command.updateUserProfileDto.username,
+      );
+      if (checkUserName && checkUserName.username !== user.username)
+        throw new BadRequestException('This username is already used');
+    }
     const profile =
       await this.profileQueryRepository.findProfileAndAvatarByUserId(userId);
 

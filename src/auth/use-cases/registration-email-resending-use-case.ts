@@ -1,10 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EmailDto } from '../dto/email.dto';
-import {
-  BadRequestException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { MailService } from '../../mail/mail.service';
 import { UserRepository } from '../../user/repositories/user.repository';
 
@@ -21,7 +17,6 @@ export class RegistrationEmailResendingUseCase
   ) {}
 
   async execute(command: RegistrationEmailResendingCommand) {
-    // find user
     const user = await this.userRepository.findUserByEmail(
       command.emailDto.email,
     );

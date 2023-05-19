@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { type Metadata } from 'sharp';
+
+import { ImageMetadataType } from '../types';
 
 export interface Dimensions {
   width?: number;
@@ -8,7 +9,7 @@ export interface Dimensions {
 
 @Injectable()
 export abstract class ImageService {
-  public abstract getMetadata(buffer: Buffer): Promise<Partial<Metadata>>;
+  public abstract getMetadata(buffer: Buffer): Promise<ImageMetadataType>;
 
   public abstract resize(
     file: Express.Multer.File,
