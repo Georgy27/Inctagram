@@ -11,31 +11,35 @@ export const ImageValidationPipe = <
   T extends {
     fileType: string;
     maxSize?: number;
-    minHeight: number;
-    minWidth: number;
+    minHeight?: number;
+    minWidth?: number;
   },
 >(
   args: T,
 ) => {
   const { fileType, maxSize = MAX_AVATAR_SIZE, minHeight, minWidth } = args;
 
-  return new ParseFilePipeBuilder()
+  const pipeBuilder = new ParseFilePipeBuilder()
     .addFileTypeValidator({
       fileType,
     })
     .addMaxSizeValidator({
       maxSize,
-    })
-    .addValidator(
+    });
+
+  if (minHeight && minWidth) {
+    pipeBuilder.addValidator(
       new ImageDimensionsValidatonPipe({
         minWidth,
         minHeight,
       }),
-    )
-    .build({
-      errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-      exceptionFactory: (err) => {
-        throw new BadRequestException(err);
-      },
-    });
+    );
+  }
+
+  return pipeBuilder.build({
+    errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+    exceptionFactory: (err) => {
+      throw new BadRequestException(err);
+    },
+  });
 };

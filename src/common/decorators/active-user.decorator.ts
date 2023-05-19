@@ -6,6 +6,6 @@ export const ActiveUser = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
     const user = <ActiveUserData>request.user;
 
-    return field ? user[field] : user;
+    return field && user ? user[field] : user;
   },
 );

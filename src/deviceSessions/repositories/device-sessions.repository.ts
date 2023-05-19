@@ -40,11 +40,16 @@ export class DeviceSessionsRepository {
     hashedTokens: { accessTokenHash: string; refreshTokenHash: string },
   ) {
     try {
-      await this.prisma.token.update({
-        where: { deviceSessionId },
+      await this.prisma.deviceSession.update({
+        where: { deviceId: deviceSessionId },
         data: {
-          accessTokenHash: hashedTokens.accessTokenHash,
-          refreshTokenHash: hashedTokens.refreshTokenHash,
+          lastActiveDate: new Date(),
+          token: {
+            update: {
+              accessTokenHash: hashedTokens.accessTokenHash,
+              refreshTokenHash: hashedTokens.refreshTokenHash,
+            },
+          },
         },
       });
     } catch (error) {

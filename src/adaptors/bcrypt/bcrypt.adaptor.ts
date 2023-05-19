@@ -5,6 +5,7 @@ export class BcryptAdaptor {
   async generateSaltAndHash(password: string): Promise<string> {
     const passwordSalt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, passwordSalt);
+
     return hash;
   }
 }

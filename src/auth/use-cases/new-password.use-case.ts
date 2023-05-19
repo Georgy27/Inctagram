@@ -1,7 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import bcrypt from 'bcrypt';
-import { BadRequestException } from '@nestjs/common';
-import { UserRepository } from '../../user/repositories/user.repository';
+
+import { UserRepository } from 'src/user/repositories/user.repository';
+import { MailService } from 'src/mail/mail.service';
+import { BadRequestException, GoneException } from '@nestjs/common';
 
 export class NewPasswordCommand {
   public constructor(
@@ -23,7 +25,7 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand> {
           recoveryCode,
         );
 
-      if (!user) throw new BadRequestException('Bad recovery code');
+      if (!user) throw new BadRequestException();
 
       const exp = user?.passwordRecovery?.expirationDate;
 
@@ -33,7 +35,7 @@ export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand> {
 
           await this.usersRepository.updatePassword(user.id, hash);
         } else {
-          throw new BadRequestException('Bad recovery code');
+          throw new GoneException();
         }
       }
     } catch (error) {

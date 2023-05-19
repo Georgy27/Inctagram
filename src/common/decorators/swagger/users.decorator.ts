@@ -24,6 +24,8 @@ import {
   NAME_LENGTH_MIN,
   SURNAME_LENGTH_MAX,
   SURNAME_LENGTH_MIN,
+  USERNAME_LENGTH_MAX,
+  USERNAME_LENGTH_MIN,
 } from 'src/common/constants';
 import { FieldError } from 'src/types';
 
@@ -91,7 +93,7 @@ export function GetProfileApiDecorator() {
           username: 'Licence_to_kill',
           name: 'James',
           surname: 'Bond',
-          birthday: '007 - 007 - 007',
+          birthday: '2007-07-07',
           city: 'London',
           aboutMe: 'Bond, James Bond...',
           avatar: {
@@ -136,8 +138,8 @@ export function CreateProfileApiDecorator() {
             example: 'Bond',
           },
           birthday: {
-            type: 'Date',
-            example: '007 - 007 - 007',
+            type: 'string',
+            example: '2007-07-07',
           },
           city: {
             type: 'string',
@@ -184,6 +186,12 @@ export function UpdateProfileApiDecorator() {
       schema: {
         type: 'object',
         properties: {
+          username: {
+            type: 'string',
+            minimum: USERNAME_LENGTH_MIN,
+            maximum: USERNAME_LENGTH_MAX,
+            example: 'Licence_to_kill',
+          },
           name: {
             type: 'string',
             minimum: NAME_LENGTH_MIN,
@@ -197,8 +205,8 @@ export function UpdateProfileApiDecorator() {
             example: 'Bond',
           },
           birthday: {
-            type: 'Date',
-            example: '007 - 007 - 007',
+            type: 'string',
+            example: '2007-07-07',
           },
           city: {
             type: 'string',

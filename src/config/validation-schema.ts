@@ -7,4 +7,5 @@ export const configValidationSchema = Joi.object({
   YANDEX_STORAGE_API_KEY: Joi.string().required(),
   GMAIL_EMAIL: Joi.string().required(),
   GMAIL_PASSWORD: Joi.string().required(),
+  RECAPTCHA_SECRET_KEY: Joi.string().required(),
 });

@@ -2,19 +2,21 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiCookieAuth,
+  ApiForbiddenResponse,
+  ApiGoneResponse,
   ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-
+import { AuthDto } from 'src/auth/dto/auth.dto';
 import { FieldError, LogginSuccessViewModel } from '../../../types';
 import { applyDecorators } from '@nestjs/common';
 import { ConfirmationCodeDto } from '../../../auth/dto/confirmation-code.dto';
 import { EmailDto } from '../../../auth/dto/email.dto';
 import { NewPasswordDto } from '../../../auth/dto/new-password.dto';
 import { LoginDto } from '../../../auth/dto/login.dto';
-import { AuthDto } from '../../../auth/dto/auth.dto';
+import { GoogleCodeDto } from '../../../auth/dto/google-code.dto';
 
 export function AuthRegistrationSwaggerDecorator() {
   return applyDecorators(
@@ -87,8 +89,11 @@ export function AuthRegistrationConfirmationSwaggerDecorator() {
       description: 'Email was verified. Account was activated',
     }),
     ApiBadRequestResponse({
-      description:
-        'Confirmation code is incorrect, expired or already been applied',
+      description: 'Confirmation code is incorrect or has been applied',
+      type: FieldError,
+    }),
+    ApiGoneResponse({
+      description: 'Confirmation code expired',
       type: FieldError,
     }),
   );
@@ -140,14 +145,35 @@ export function AuthPasswordRecoverySwaggerDecorator() {
       summary:
         'Password recovery via Email confirmation. Email should be sent with the RecoveryCode inside',
     }),
-    ApiBody({ type: EmailDto }),
+    ApiBody({
+      schema: {
+        type: 'object',
+        required: ['email', 'recaptchaToken'],
+        properties: {
+          email: {
+            type: 'string',
+            example: 'Jamesbond@yandex.ru',
+          },
+          recaptchaToken: {
+            type: 'string',
+          },
+        },
+      },
+    }),
     ApiResponse({
       status: 204,
       description:
         "Even if current email is not registered (for prevent user's email detection)",
     }),
     ApiBadRequestResponse({
-      description: 'inputModel has invalid email (for example 222^gmail.com)',
+      description:
+        'InputModel has invalid email or recaptcha was not provided (for example 222^gmail.com)',
+    }),
+    ApiForbiddenResponse({
+      description: 'invalid-input-response (recaptcha is not correct)',
+    }),
+    ApiGoneResponse({
+      description: 'Code expired',
     }),
   );
 }
@@ -165,6 +191,23 @@ export function AuthNewPasswordSwaggerDecorator() {
     ApiBadRequestResponse({
       description:
         'If the inputModel has incorrect value (incorrect password length) or RecoveryCode is incorrect or expired',
+    }),
+  );
+}
+
+export function AuthGoogleDecorator() {
+  return applyDecorators(
+    ApiOperation({
+      summary: 'Sign in via Google account',
+    }),
+    ApiBody({ type: GoogleCodeDto }),
+    ApiResponse({
+      status: 200,
+      description:
+        'If google credentials are correct, returns JWT accessToken (expires after 1 hour) in body and JWT refreshToken in cookie (http-only, secure) (expires after 2 hours). If user is already registered, returns an email with suggestion to merge accounts',
+    }),
+    ApiUnauthorizedResponse({
+      description: 'If the code provided is incorrect',
     }),
   );
 }

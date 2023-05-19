@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export abstract class QueryRepositoryAdapter {
+export abstract class RepositoryAdapter {
   public abstract deleteAll(): Promise<any>;
 }
