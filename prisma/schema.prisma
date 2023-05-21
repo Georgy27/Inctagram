@@ -24,12 +24,26 @@ model User {
   avatar            Avatar?
   profile           Profile?
   post              Post[]
+  account           Account?
   oauthAccount      OauthAccount[]
+  accountId         String?
 }
 
 enum OauthProvider {
   GITHUB
   GOOGLE
+}
+
+enum AccountType {
+  PERSONAL
+  BUSINESS
+}
+
+model Account {
+  id          String      @id @default(uuid())
+  accountType AccountType @default(PERSONAL)
+  user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String      @unique
 }
 
 model OauthAccount {

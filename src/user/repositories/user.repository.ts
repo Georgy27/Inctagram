@@ -36,6 +36,7 @@ export class UserRepository {
         },
         passwordRecovery: { create: {} },
         profile: { create: {} },
+        account: { create: {} },
       },
       select: {
         id: true,
@@ -72,6 +73,7 @@ export class UserRepository {
         },
         passwordRecovery: { create: {} },
         profile: { create: {} },
+        account: { create: {} },
         avatar: {
           create: avatarPayload ? { url, previewUrl, size, height, width } : {},
         },

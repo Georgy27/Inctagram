@@ -11,13 +11,14 @@ import { configValidationSchema } from './config/validation-schema';
 import { TestingModule } from './testing-remove-all-data/testing.module';
 import { DeviceSessionsModule } from './deviceSessions/device-sessions.module';
 import { googleOauthConfig } from './config/google-oauth.config';
+import { stripeConfig } from './config/stripe.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: configValidationSchema,
-      load: [githubOauthConfig, googleOauthConfig],
+      load: [githubOauthConfig, googleOauthConfig, stripeConfig],
     }),
     AuthModule,
     UserModule,
