@@ -7,9 +7,12 @@ import { setupSwagger } from './config/swagger.config';
 import { PrismaService } from './prisma/prisma.service';
 import { useGlobalPipes } from './common/pipes/global.pipe';
 import { useGlobalFilters } from './common/filters/global.filter';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
   app.enableCors({
     origin: ['http://localhost:6000', 'https://inctagram-m9ju.vercel.app'],
     credentials: true,

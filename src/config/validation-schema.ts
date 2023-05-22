@@ -8,4 +8,6 @@ export const configValidationSchema = Joi.object({
   GMAIL_EMAIL: Joi.string().required(),
   GMAIL_PASSWORD: Joi.string().required(),
   RECAPTCHA_SECRET_KEY: Joi.string().required(),
+  STRIPE_SECRET_KEY: Joi.string().required(),
+  STRIPE_WEBHOOK_SECRET: Joi.string().required(),
 });

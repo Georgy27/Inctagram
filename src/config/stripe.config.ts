@@ -2,5 +2,7 @@ import { registerAs } from '@nestjs/config';
 
 export const stripeConfig = registerAs('stripe', () => ({
   apiKey: process.env.STRIPE_SECRET_KEY,
-  // webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+  webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
 }));
+
+export type stripeConfigType = ReturnType<typeof stripeConfig>;
