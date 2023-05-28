@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
+import { PaymentProviderType } from '../dto/checkout.dto';
 
 @Injectable()
 export default class StripeService {
@@ -15,13 +16,31 @@ export default class StripeService {
     );
   }
 
-  async stripeCheckout(priceId: string) {
+  async stripeCheckout(
+    priceId: string,
+    providerPriceId: string,
+    userId: string,
+    renew: boolean,
+  ) {
+    const mode = renew ? 'subscription' : 'payment';
     const session = await this.stripe.checkout.sessions.create({
-      success_url: 'https://example.com/success',
-      cancel_url: 'https://example.com/cancel',
-      payment_method_types: ['card'],
-      line_items: [{ price: priceId, quantity: 1 }],
-      mode: 'payment',
+      line_items: [
+        {
+          price: providerPriceId,
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        paymentId: priceId,
+        userId: userId,
+      },
+      client_reference_id: priceId,
+      expires_at: Math.floor((Date.now() + 1_800_000) / 1000),
+      mode,
+      success_url: 'https://example.com?success=true',
+      cancel_url: 'https://example.com?success=true',
     });
+
+    return session;
   }
 }

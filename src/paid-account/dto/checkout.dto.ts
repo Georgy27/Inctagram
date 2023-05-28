@@ -6,9 +6,9 @@ import {
   IsString,
 } from 'class-validator';
 
-export enum PaymentSystemType {
-  Paypal = 'paypal',
-  Stripe = 'stripe',
+export enum PaymentProviderType {
+  Paypal = 'PAYPAL',
+  Stripe = 'STRIPE',
 }
 export class CheckoutDto {
   @IsString()
@@ -17,9 +17,9 @@ export class CheckoutDto {
   @IsString()
   @IsNotEmpty()
   priceId: string;
-  @IsEnum(PaymentSystemType)
+  @IsEnum(PaymentProviderType)
   @IsNotEmpty()
-  paymentSystem: PaymentSystemType;
+  paymentProvider: PaymentProviderType;
   @IsBoolean()
   @IsOptional()
   renew: boolean = false;

@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { CheckoutDto } from '../dto/checkout.dto';
+import { CreatePaymentCommand } from '../use-cases/create-payment.use-case';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
@@ -8,13 +9,13 @@ export class SubscriptionsController {
 
   @Post('checkout-session')
   async createCheckoutSession(@Body() checkoutDto: CheckoutDto) {
-    const { userId, priceId, paymentSystem, renew } = checkoutDto;
+    const { userId, priceId, paymentProvider, renew } = checkoutDto;
 
-    // const url = await this.commandBus.execute<
-    //   CreatePaymentCommand,
-    //   string | null
-    // >(new CreatePaymentCommand(paymentSystem, priceId, userId, renew));
-    //
+    const url = await this.commandBus.execute<
+      CreatePaymentCommand,
+      string | null
+    >(new CreatePaymentCommand(paymentProvider, priceId, userId, renew));
+
     // return url;
   }
 
