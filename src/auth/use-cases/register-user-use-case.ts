@@ -32,18 +32,18 @@ export class RegisterUserUseCase
     // generate salt and hash
     const hash = await this.bcryptAdaptor.generateSaltAndHash(password);
 
-    const newUser = await this.userRepository.createUser(command.authDto, hash);
+    return this.userRepository.createUser(command.authDto, hash);
 
-    if (!newUser.emailConfirmation?.confirmationCode)
-      throw new NotFoundException('confirmation code does not exist');
+    // if (!newUser.emailConfirmation?.confirmationCode)
+    //   throw new NotFoundException('confirmation code does not exist');
     // // send email
-    try {
-      return this.mailService.sendUserConfirmation(
-        newUser,
-        newUser.emailConfirmation.confirmationCode,
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   return this.mailService.sendUserConfirmation(
+    //     newUser,
+    //     newUser.emailConfirmation.confirmationCode,
+    //   );
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 }

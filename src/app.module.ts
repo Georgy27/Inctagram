@@ -12,6 +12,7 @@ import { TestingModule } from './testing-remove-all-data/testing.module';
 import { DeviceSessionsModule } from './deviceSessions/device-sessions.module';
 import { googleOauthConfig } from './config/google-oauth.config';
 import { stripeConfig } from './config/stripe.config';
+import { SubscriptionModule } from './paid-account/subscription.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { stripeConfig } from './config/stripe.config';
     PrismaModule,
     AdaptorModule,
     DeviceSessionsModule,
+    SubscriptionModule,
     TestingModule,
   ],
   controllers: [AppController],

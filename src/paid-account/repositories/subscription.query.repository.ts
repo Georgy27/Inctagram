@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { PaymentProviderType } from '../dto/checkout.dto';
-import { PaymentType } from '@prisma/client';
 
 @Injectable()
 export class SubscriptionQueryRepository {
@@ -14,14 +13,38 @@ export class SubscriptionQueryRepository {
   public getPricingTarrif(
     priceId: string,
     provider: PaymentProviderType,
-    paymentType: 'ONETIME' | 'RECCURING',
+    subscriptionType: 'ONETIME' | 'RECCURING',
   ) {
     return this.prisma.pricingTarrifs.findFirst({
       where: {
         priceId,
         provider,
-        paymentType,
+        subscriptionType,
       },
     });
+  }
+
+  // public async getSubscriptionByQuery(query: Partial<Subscription>) {
+  //   try {
+  //     return this.prisma.subscription.findFirst({
+  //       where: query,
+  //       include: {
+  //         subscriptionPayment: {
+  //           select: {
+  //             id: true,
+  //             paymentId: true,
+  //           },
+  //         },
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //
+  //     throw error;
+  //   }
+  // }
+
+  public async getCurrentSubscription(userId: string) {
+    return this.prisma.subscription.findFirst({ where: { userId } });
   }
 }

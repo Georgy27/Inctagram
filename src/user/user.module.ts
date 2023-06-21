@@ -26,6 +26,7 @@ import { PostsRepository } from './repositories/post/posts.repository';
 import { UpdatePostUseCase } from './use-cases/post/update-post.use-case';
 import { PostsQueryRepositoryAdatapter } from './repositories/adapters/post/posts.query-adapter';
 import { PostsQueryRepository } from './repositories/post/posts.query-repository';
+import { MailService } from '../mail/mail.service';
 
 const useCases = [
   UploadAvatarUseCase,
@@ -42,6 +43,7 @@ const useCases = [
   providers: [
     UserRepository,
     PrismaClient,
+    MailService,
     ...useCases,
     {
       provide: CloudStrategy,

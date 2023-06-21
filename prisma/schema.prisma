@@ -28,6 +28,7 @@ model User {
   oauthAccount      OauthAccount[]
   accountId         String?
   payment           Payment[]
+  subscription      Subscription[]
 }
 
 enum OauthProvider {
@@ -158,40 +159,73 @@ model ImageMetadata {
 }
 
 model PricingTarrifs {
-  id              String          @id @default(uuid())
-  providerPriceId String
-  priceId         String
-  price           Price           @relation(fields: [priceId], references: [id], onDelete: Cascade)
-  paymentType     PaymentType
-  provider        PaymentProvider
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  payments        Payment[]
+  id               String           @id @default(uuid())
+  providerPriceId  String
+  provider         PaymentProvider
+  subscriptionType SubscriptionType
+  priceId          String
+  price            Price            @relation(references: [id], fields: [priceId], onDelete: Cascade)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  payment          Payment[]
 }
 
 model Price {
-  id            String           @id @default(uuid())
-  currency      Currency         @default(USD)
-  value         Float
-  period        Int
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
-  providerPrice PricingTarrifs[]
+  id             String           @id @default(uuid())
+  currency       Currency         @default(USD)
+  value          Float
+  period         Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  pricingTarrifs PricingTarrifs[]
+  subscription   Subscription[]
+  payment        Payment[]
 }
 
 model Payment {
-  id             String         @id @default(uuid())
-  description    String?
-  status         PaymentStatus
-  subscription   String?        @unique
-  expirationDate DateTime?
-  user           User           @relation(fields: [userId], references: [id])
-  userId         String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  tarrif         PricingTarrifs @relation(fields: [tarrifId], references: [id])
-  tarrifId       String
+  id              String           @id @default(uuid())
+  user            User             @relation(references: [id], fields: [userId], onDelete: Cascade)
+  userId          String
+  price           Price            @relation(fields: [priceId], references: [id])
+  priceId         String
+  status          PaymentStatus
+  reference       PaymentReference @default(ONETIME)
+  provider        PaymentProvider
+  info            Json?
+  pricingTarrif   PricingTarrifs   @relation(references: [id], fields: [pricingTarrifId], onDelete: Cascade)
+  pricingTarrifId String
+  subscription    Subscription?    @relation(references: [id], fields: [subscriptionId], onDelete: Cascade)
+  subscriptionId  String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
+
+model Subscription {
+  id                  String             @id @default(uuid())
+  endDate             DateTime?          @db.Timestamptz(3)
+  nextPaymentDate     DateTime?
+  startDate           DateTime           @default(now()) @db.Timestamptz(3)
+  relatedSubscription String?
+  status              SubscriptionStatus
+  type                SubscriptionType
+  user                User               @relation(references: [id], fields: [userId], onDelete: Cascade)
+  userId              String
+  customerId          String?            @unique
+  payments            Payment[]
+  price               Price              @relation(references: [id], fields: [priceId], onDelete: Cascade)
+  priceId             String
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+}
+
+// model SubscriptionPayment {
+//   id           String        @id @default(uuid())
+//   payment      Payment       @relation(references: [id], fields: [paymentId], onDelete: Cascade)
+//   paymentId    String        @unique
+//   createdAt    DateTime      @default(now())
+//   updatedAt    DateTime      @updatedAt
+//   subscription Subscription?
+// }
 
 enum Currency {
   USD
@@ -211,4 +245,26 @@ enum PaymentType {
 enum PaymentProvider {
   STRIPE
   PAYPAL
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PENDING
+  CANCELLED
+}
+
+enum SubscriptionType {
+  ONETIME
+  RECCURING
+}
+
+enum PaymentReference {
+  RECCURING
+  ONETIME
+}
+
+enum PeriodType {
+  DAY
+  WEEK
+  MONTH
 }

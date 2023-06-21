@@ -1,5 +1,5 @@
 import { EmailConfirmation, OauthAccount, OauthProvider } from '@prisma/client';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { add } from 'date-fns';
 
@@ -12,44 +12,62 @@ import {
 } from '../types';
 import { da } from 'date-fns/locale';
 import { UpdateOrCreateOauthAccountPaylod } from 'src/auth/types';
+import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class UserRepository {
-  public constructor(private prisma: PrismaService) {}
+  public constructor(
+    private prisma: PrismaService,
+    private mailService: MailService,
+  ) {}
 
   public async createUser(createUserDto: CreateUserDto, hash: string) {
     const { username, email } = createUserDto;
-
-    return this.prisma.user.create({
-      data: {
-        username,
-        email,
-        hash,
-        emailConfirmation: {
-          create: {
-            confirmationCode: randomUUID(),
-            expirationDate: add(new Date(), {
-              minutes: 5,
-            }).toISOString(),
-            isConfirmed: false,
+    try {
+      return this.prisma.$transaction(async (tx) => {
+        const user = await tx.user.create({
+          data: {
+            username,
+            email,
+            hash,
+            emailConfirmation: {
+              create: {
+                confirmationCode: randomUUID(),
+                expirationDate: add(new Date(), {
+                  minutes: 5,
+                }).toISOString(),
+                isConfirmed: false,
+              },
+            },
+            passwordRecovery: { create: {} },
+            profile: { create: {} },
+            account: { create: {} },
           },
-        },
-        passwordRecovery: { create: {} },
-        profile: { create: {} },
-        account: { create: {} },
-      },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        createdAt: true,
-        emailConfirmation: {
           select: {
-            confirmationCode: true,
+            id: true,
+            email: true,
+            username: true,
+            createdAt: true,
+            emailConfirmation: {
+              select: {
+                confirmationCode: true,
+              },
+            },
           },
-        },
-      },
-    });
+        });
+
+        if (!user.emailConfirmation?.confirmationCode)
+          throw new NotFoundException('confirmation code does not exist');
+
+        return this.mailService.sendUserConfirmation(
+          user,
+          user.emailConfirmation.confirmationCode,
+        );
+      });
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
 
   public async createUserWithOauthAccount(

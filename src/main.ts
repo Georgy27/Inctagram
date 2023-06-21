@@ -13,6 +13,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
   });
+
   app.enableCors({
     origin: ['http://localhost:6000', 'https://inctagram-m9ju.vercel.app'],
     credentials: true,
